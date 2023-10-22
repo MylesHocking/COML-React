@@ -55,7 +55,7 @@ function App() {
     return () => {
       window.removeEventListener("storage", handleStorageChange);
     };
-  }, []);
+  }, [userId, userInfo]);
 
 
   // Second useEffect to get cars when userId changes
