@@ -1,15 +1,29 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { useUserContext } from '../App.js';
 
 function App() {
+  const { refreshFromLocalStorage } = useUserContext();
   const navigate = useNavigate();
   const apiUrl = process.env.REACT_APP_FLASK_API_URL;
   const oauthRedirectUri = process.env.REACT_APP_OAUTH_REDIRECT_URI;
-  
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulating an async operation, you could replace this with your real checks
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
+  }, []);
+
   return (
-    <GoogleOAuthProvider
+    <div className="google-login-container">
+      {isLoading ? (
+        <div className="placeholder">Loading...</div>
+      ) : (
+        <GoogleOAuthProvider
       clientId="1003699094925-sv0et1mp81ln28l24tccaosr60sbmuca.apps.googleusercontent.com"
       redirectUri={oauthRedirectUri}
     >
@@ -29,6 +43,7 @@ function App() {
             localStorage.setItem("user_id", user_info.id);  // <-- Store user ID here
             //console.log("User info:", user_info);
             localStorage.setItem("userInfo", JSON.stringify(user_info));
+            refreshFromLocalStorage(); 
             
             //console.log("localstorage User info:", localStorage.getItem("userInfo"));
             // push to chart page
@@ -44,8 +59,9 @@ function App() {
         }}
       />
     </GoogleOAuthProvider>
-
-  );
+  )}
+</div>
+);
 }
 
 export default App;

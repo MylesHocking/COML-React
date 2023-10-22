@@ -15,10 +15,23 @@ const CarChart = ({ cars }) => {
 
   const [selectedCar, setSelectedCar] = useState(null);
 
-  const handlePointClick = (car, imageUrl) => {
-    console.log("Clicked on:", car, imageUrl);
+  const handlePointClick = async (car) => {
+    console.log("Clicked on:", car);  
+    // Fetch the high-res image
+    const imageUrl = await fetchHighResImage(car.model_id);  
     setSelectedCar({...car, imageUrl});
   };
+  
+  const fetchHighResImage = async (modelId) => {
+    try {
+        const response = await axios.get(`${apiUrl}/api/get_first_photo/${modelId}`);
+        return response.data.image_url;
+    } catch (error) {
+        console.error('Error fetching high-res image:', error);
+        return null;
+    }
+  };
+
 
   useEffect(() => {
     const yAxisLabels = [0, 2, 4, 6, 8, 10];
@@ -45,31 +58,23 @@ const CarChart = ({ cars }) => {
         label,
         bottom: (label / 10) * chartHeight,
       })));  
-
+      
       const fetchImages = async () => {
-        const newPointsWithImages = [];
-    
-        for (const car of cars) {
+        const fetchImagePromises = cars.map(async (car) => {
           const left = ((car.year_purchased - earliestYear) / rangeOfYears) * chartWidth;
           const bottom = (car.rating / 10) * chartHeight;
           let imageUrl = null;
-    
+      
           try {
-            const response = await axios.get(`${apiUrl}/api/get_first_image/${car.model_id}`);
-            imageUrl = response.data.image_url; // assuming the URL comes in response.data
+            const response = await axios.get(`${apiUrl}/api/get_first_thumb/${car.model_id}`);
+            imageUrl = response.data.image_url;
           } catch (error) {
-            if (error.response && error.response.status === 404) {
-              // Handle 'No images found' scenario. We'll leave imageUrl as null.
-            }
+            // handle error
           }
-          
-          newPointsWithImages.push({
-            left,
-            bottom,
-            imageUrl,
-          });
-        }
-    
+          return {left, bottom, imageUrl};
+        });
+      
+        const newPointsWithImages = await Promise.all(fetchImagePromises);
         setPoints(newPointsWithImages);
       };
     
@@ -149,7 +154,7 @@ const CarChart = ({ cars }) => {
                 className="car-label"
                 style={{ 
                   left: `${point.left -5}px`, 
-                  bottom: `${car.rating < 2 ? point.bottom + 30 : point.bottom - 50}px`
+                  bottom: `${car.rating < 2 ? point.bottom + 20 : point.bottom - 60}px`
                 }}
               >
                 <span className="make">{car.make}</span><br />
@@ -165,41 +170,37 @@ const CarChart = ({ cars }) => {
               <h1>{selectedCar.make} {selectedCar.model}</h1>
               {selectedCar.imageUrl ? <img src={selectedCar.imageUrl} alt={`${selectedCar.make} ${selectedCar.model}`} /> : <p>No image available</p>}
               <p>Memories: {selectedCar.memories}</p>
-              <p>Trim: {selectedCar.model_trim || 'n/a'}</p>
-              <p>Made: {selectedCar.model_year || 'n/a'}</p>
-              <div class="smaller-font">
-                <p>Made: {selectedCar.model_year || 'n/a'}</p>
-                <p>Engine CC: {selectedCar.model_engine_cc || 'n/a'}</p>
-                <p>Sold in US: {selectedCar.model_sold_in_us ? 'Yes' : 'No' || 'n/a'}</p>
-                <p>Engine Type: {selectedCar.model_engine_type || 'n/a'}</p>
-                <p>Engine Position: {selectedCar.model_engine_position || 'n/a'}</p>
-                <p>Engine Cylinders: {selectedCar.model_engine_cyl || 'n/a'}</p>
-                <p>Drive: {selectedCar.model_drive || 'n/a'}</p>
-                <p>Engine Power (PS): {selectedCar.model_engine_power_ps || 'n/a'}</p>
-                <p>Engine Torque (Nm): {selectedCar.model_engine_torque_nm || 'n/a'}</p>
-                <p>Engine Fuel: {selectedCar.model_engine_fuel || 'n/a'}</p>
-                <p>Weight (kg): {selectedCar.model_weight_kg || 'n/a'}</p>
-                <p>Transmission Type: {selectedCar.model_transmission_type || 'n/a'}</p>
-                <p>Doors: {selectedCar.model_doors || 'n/a'}</p>
-                <p>Trim: {selectedCar.model_trim || 'n/a'}</p>
-                <p>Body: {selectedCar.model_body || 'n/a'}</p>
-                <p>Engine Valves Per Cylinder: {selectedCar.model_engine_valves_per_cyl || 'n/a'}</p>
-                <p>Engine Power RPM: {selectedCar.model_engine_power_rpm || 'n/a'}</p>
-                <p>Engine Torque RPM: {selectedCar.model_engine_torque_rpm || 'n/a'}</p>
-                <p>Engine Bore (mm): {selectedCar.model_engine_bore_mm || 'n/a'}</p>
-                <p>Engine Stroke (mm): {selectedCar.model_engine_stroke_mm || 'n/a'}</p>
-                <p>Engine Compression: {selectedCar.model_engine_compression || 'n/a'}</p>
-                <p>Seats: {selectedCar.model_seats || 'n/a'}</p>
-                <p>Engine Torque RPM: {selectedCar.model_engine_torque_rpm || 'n/a'}</p>
-                <p>Mixed L/KM: {selectedCar.model_lkm_mixed || 'n/a'}</p>
-                <p>Engine Bore (mm): {selectedCar.model_engine_bore_mm || 'n/a'}</p>
-                <p>Engine Stroke (mm): {selectedCar.model_engine_stroke_mm || 'n/a'}</p>
-                <p>Highway L/KM: {selectedCar.model_lkm_hwy || 'n/a'}</p>
-                <p>City L/KM: {selectedCar.model_lkm_city || 'n/a'}</p>
-                <p>Top Speed (KPH): {selectedCar.model_top_speed_kph || 'n/a'}</p>
-                <p>0 to 100 KPH: {selectedCar.model_0_to_100_kph || 'n/a'}</p>
-                <p>CO2: {selectedCar.model_co2 || 'n/a'}</p>
+              <div className="smaller-font">
+                {selectedCar.model_trim && <p>Trim: {selectedCar.model_trim}</p>}                
+                {selectedCar.model_year && <p>Made: {selectedCar.model_year}</p>}
+                {selectedCar.model_engine_cc && <p>Engine CC: {selectedCar.model_engine_cc}</p>}
+                {selectedCar.model_sold_in_us !== undefined && <p>Sold in US: {selectedCar.model_sold_in_us ? 'Yes' : 'No'}</p>}
+                {selectedCar.model_engine_type && <p>Engine Type: {selectedCar.model_engine_type}</p>}
+                {selectedCar.model_engine_position && <p>Engine Position: {selectedCar.model_engine_position}</p>}
+                {selectedCar.model_engine_cyl && <p>Engine Cylinders: {selectedCar.model_engine_cyl}</p>}
+                {selectedCar.model_drive && <p>Drive: {selectedCar.model_drive}</p>}
+                {selectedCar.model_engine_power_ps && <p>Engine Power (PS): {selectedCar.model_engine_power_ps}</p>}
+                {selectedCar.model_engine_torque_nm && <p>Engine Torque (Nm): {selectedCar.model_engine_torque_nm}</p>}
+                {selectedCar.model_engine_fuel && <p>Engine Fuel: {selectedCar.model_engine_fuel}</p>}
+                {selectedCar.model_weight_kg && <p>Weight (kg): {selectedCar.model_weight_kg}</p>}
+                {selectedCar.model_transmission_type && <p>Transmission Type: {selectedCar.model_transmission_type}</p>}
+                {selectedCar.model_doors && <p>Doors: {selectedCar.model_doors}</p>}
+                {selectedCar.model_body && <p>Body: {selectedCar.model_body}</p>}
+                {selectedCar.model_engine_valves_per_cyl && <p>Engine Valves Per Cylinder: {selectedCar.model_engine_valves_per_cyl}</p>}
+                {selectedCar.model_engine_power_rpm && <p>Engine Power RPM: {selectedCar.model_engine_power_rpm}</p>}
+                {selectedCar.model_engine_torque_rpm && <p>Engine Torque RPM: {selectedCar.model_engine_torque_rpm}</p>}
+                {selectedCar.model_engine_bore_mm && <p>Engine Bore (mm): {selectedCar.model_engine_bore_mm}</p>}
+                {selectedCar.model_engine_stroke_mm && <p>Engine Stroke (mm): {selectedCar.model_engine_stroke_mm}</p>}
+                {selectedCar.model_engine_compression && <p>Engine Compression: {selectedCar.model_engine_compression}</p>}
+                {selectedCar.model_seats && <p>Seats: {selectedCar.model_seats}</p>}
+                {selectedCar.model_lkm_mixed && <p>Mixed L/KM: {selectedCar.model_lkm_mixed}</p>}
+                {selectedCar.model_lkm_hwy && <p>Highway L/KM: {selectedCar.model_lkm_hwy}</p>}
+                {selectedCar.model_lkm_city && <p>City L/KM: {selectedCar.model_lkm_city}</p>}
+                {selectedCar.model_top_speed_kph && <p>Top Speed (KPH): {selectedCar.model_top_speed_kph}</p>}
+                {selectedCar.model_0_to_100_kph && <p>0 to 100 KPH: {selectedCar.model_0_to_100_kph}</p>}
+                {selectedCar.model_co2 && <p>CO2: {selectedCar.model_co2}</p>}
               </div>
+
 
             </div>
           </div>

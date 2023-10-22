@@ -1,4 +1,5 @@
 body {
+  width: 844px;
   font-family: 'Arial Black', sans-serif;
   color: #000;
   margin: 0;
@@ -15,7 +16,7 @@ code {
 header {
   width: 844px;
   height: 116px;
-  background: linear-gradient( #e55c54, #ae0507);
+  background: linear-gradient( #dc534b, #a50308);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -26,6 +27,8 @@ header {
 .chrome-bar {
   background-color: #A9A9A9;
   height: 2px;
+  width: 844px;
+
 }
 
 .navbar {
@@ -60,7 +63,7 @@ header {
   background-color: #e1e8f2;  /* Your chrome color */
   height: 20px;
   position: absolute;  
-  top: 54px;  
+  top: 50%;  
   left: 0;  
   right: 0;  
   transform: translateY(-50%);  
@@ -71,9 +74,9 @@ header {
 
 .chrome-pipe2 {
   background-color: #191a1a;  /* Your chrome color */
-  height: 5px;
+  height: 8px;
   position: absolute;  
-  top: 65px;  
+  top: 62%;  
   left: 0;  
   right: 0;  
   transform: translateY(-50%);  
@@ -165,7 +168,7 @@ footer {
 
 .car-label {
   position: absolute;
-  line-height: 0.7;
+  line-height: 0.6;
   text-align: center;
   font-size: 12px;  
   font-weight: bold;
@@ -173,10 +176,13 @@ footer {
   text-overflow: ellipsis;
   white-space: nowrap;
   width: 60px;  
+  height: 30px; 
+  padding: 2px 0;
+  padding-top: 10px;
 }
 
 .make, .model {
-  line-height: 0.7;
+  line-height: 0.6;
   display: block;
 }
 
@@ -276,6 +282,7 @@ footer {
 /* LANDING PAGE */
 
 .landing-page-container {
+  width: 844px;
   text-align: center;
   margin-top: 50px;
 }
@@ -287,4 +294,36 @@ footer {
   color: white;
   border: none;
   cursor: pointer;
+}
+
+/* LOGIN PAGE */
+.google-login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px; 
+  text-align: center;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.placeholder {
+  text-align: center;
+  /* Add any other styling for the placeholder here */
+}
+
+/* LOGOUT PAGE */
+.logout-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 300px;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.logout-container h1, .logout-container p {
+  margin-bottom: 1rem;
 }

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './AddCar.css';
 import axios from 'axios';
 
 const AddCar = () => {
@@ -21,10 +22,11 @@ const AddCar = () => {
     const fetchFirstImage = async (modelId) => {
         console.log("Fetching first image for model:", modelId);     
         try {
-            console.log(`API URL for fetching first image: ${apiUrl}/api/get_first_image/${modelId}`);
+            console.log(`API URL for fetching first image: ${apiUrl}/api/get_first_photo/${modelId}`);
 
-            const response = await axios.get(`${apiUrl}/api/get_first_image/${modelId}`);          
-            const imageUrl = response.data.image_url;
+            const response = await axios.get(`${apiUrl}/api/get_first_photo/${modelId}`);          
+            const imageUrl = response.data.image_url;          
+              
             setImageURL(imageUrl);
             console.log("Set Image URL:", imageUrl);
         } catch (error) {
@@ -146,94 +148,116 @@ const AddCar = () => {
 
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-      <label>
-        Make:
-        <select
-            name="make"
-            value={formData.make}
-            onChange={handleInputChange}
-        >
-            <option value="" disabled>Select make</option>
-            {makes.map((make, index) => (
-            <option key={index} value={make}>{make}</option>
-            ))}
-        </select>
-        </label>
+    
+  <div className={"add-car-container"}>
+  <form onSubmit={handleSubmit} className="car-form">
+    <div className="row">
+      <div className="col">
         <label>
-            Model:
-            <select
-                name="model"
-                value={formData.model}
-                onChange={handleInputChange}
-            >
-                <option value="" disabled>Select model</option>
-                {models.map((model, index) => (
-                <option key={index} value={model.name}>{model.name}</option>
-                ))}
-            </select>
-        </label>
-        <label>
-            Year and Trim:
-            <select
-                name="variant"
-                value={formData.variant}
-                onChange={handleInputChange}
-            >
-                <option value="" disabled>Select Year and Trim</option>
-                {modelVariants.map((variant, index) => (                    
-                <option key={index} value={JSON.stringify({ model_id: variant.model_id, year: variant.year, trim: variant.trim })}>
-                    {variant.year} {variant.trim ? `- ${variant.trim}` : ''}
-                </option>
-        
-                ))}
-            </select>
-        </label>
-        <label>
-            Year Purchased:
-            <select
-            name="year"
-            value={formData.year}
-            onChange={handleInputChange}
-            >
-            <option value="" disabled>Select Year</option>
-            {years.map((year, index) => (
-                <option key={index} value={year}>{year}</option>
-            ))}
-            </select>
-        </label>
-        <label>
-            Rating:
-            <select
-                name="rating"
-                value={formData.rating}
-                onChange={handleInputChange}
-            >
-                <option value="" disabled>Select Rating</option>
-                {Array.from({ length: 10 }, (_, i) => i + 1).map((rating, index) => (
-                <option key={index} value={rating}>{rating}</option>
-                ))}
-            </select>
-        </label>
-        <label>
-            Memories:
-            <textarea
-                name="memories"
-                value={formData.memories}
-                onChange={handleInputChange}
-                placeholder="What are your memories?"                
-            />
-        </label>
+          Make:
+          <select
+              name="make"
+              value={formData.make}
+              onChange={handleInputChange}
+          >
+              <option value="" disabled>Select make</option>
+              {makes.map((make, index) => (
+              <option key={index} value={make}>{make}</option>
+              ))}
+          </select>
+          </label>
+        </div>
+        <div className="col">
+          <label>
+              Model:
+              <select
+                  name="model"
+                  value={formData.model}
+                  onChange={handleInputChange}
+              >
+                  <option value="" disabled>Select model</option>
+                  {models.map((model, index) => (
+                  <option key={index} value={model.name}>{model.name}</option>
+                  ))}
+              </select>
+          </label>
+        </div>
+        <div className="col">
+          <label>
+              Year and Trim:
+              <select
+                  name="variant"
+                  value={formData.variant}
+                  onChange={handleInputChange}
+              >
+                  <option value="" disabled>Select Year and Trim</option>
+                  {modelVariants.map((variant, index) => (                    
+                  <option key={index} value={JSON.stringify({ model_id: variant.model_id, year: variant.year, trim: variant.trim })}>
+                      {variant.year} {variant.trim ? `- ${variant.trim}` : ''}
+                  </option>
+          
+                  ))}
+              </select>
+          </label>
+        </div>
+      </div>
+      <div className="row">        
+        <div className="col">
+          <label>
+              Year Purchased:
+              <select
+              name="year"
+              value={formData.year}
+              onChange={handleInputChange}
+              >
+              <option value="" disabled>Select Year</option>
+              {years.map((year, index) => (
+                  <option key={index} value={year}>{year}</option>
+              ))}
+              </select>
+          </label>
+        </div>
+        <div className="col">
+          <label>
+              Rating:
+              <select
+                  name="rating"
+                  value={formData.rating}
+                  onChange={handleInputChange}
+              >
+                  <option value="" disabled>Select Rating</option>
+                  {Array.from({ length: 10 }, (_, i) => i + 1).map((rating, index) => (
+                  <option key={index} value={rating}>{rating}</option>
+                  ))}
+              </select>
+          </label>
+        </div>
+      </div>
+      
+      <div className="row">
+        <div className="col-full">
+          <label>
+              Memories:
+              <textarea
+                  name="memories"
+                  value={formData.memories}
+                  onChange={handleInputChange}
+                  placeholder="What are your memories?"                
+              />
+          </label>
+        </div>
+      </div>
 
-        <button type="submit">Add Car</button>
-      </form>
+      <button type="submit" class="get-started-button">Add Car</button>
+    </form>
       {successMessage && <p>{successMessage}</p>}
       {/* Image preview section */}
-      <div className="image-preview"> 
-        <h3>That Make and Model looked like?</h3>       
-            {imageURL && <img src={imageURL} alt="Car" />}
-      </div>
+      {(formData.make && formData.model) && (
+        <div className="image-preview">
+          <h3>That Make and Model looked like?</h3>
+          {imageURL && <img src={imageURL} alt="Car" />}
+        </div>
+      )}
       {/* Image upload section */}
       <div className="image-section">
         <h3>Add a Photo</h3>
