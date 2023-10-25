@@ -40,7 +40,6 @@ function App() {
   const [userId, setUserId] = useState(null);
   const [cars, setCars] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [numCars, setNumCars] = useState(localStorage.getItem("numCars") || 0);
 
 
   // Add this function inside App.js
@@ -58,14 +57,11 @@ function App() {
 
   // Modify your existing useEffect to use the new function
   useEffect(() => {
-    console.log('useEffect running', userId, userInfo, numCars);
+    console.log('useEffect running', userId, userInfo);
 
     const handleStorageChange = (e) => {
       if (e.key === "user_id" || e.key === "userInfo") {
         refreshFromLocalStorage();
-      }
-      if (e.key === "numCars"  && userId) {
-        fetchCarsForUser(); // fetch cars again when numCars changes
       }
     };
 
