@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import '../index.css';
 import axios from 'axios';
-import html2canvas from 'html2canvas';
-import { UserContext } from '../App';
+import html2canvas from 'html2canvas'
+import { CarContext } from '../App.js';
 
-const CarChart = ({ cars, fetchCarsForUser, userId }) => { 
+const CarChart = ({ cars, userId }) => {   
+  const { fetchCarsForUser } = useContext(CarContext);
   const apiUrl = process.env.REACT_APP_FLASK_API_URL;
   console.log("Cars in CarChart:", cars);
   const [points, setPoints] = useState([]);

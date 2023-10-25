@@ -17,16 +17,17 @@ export function useUserContext() {
 }
 
 export const CarContext = createContext();
+/*
 export function CarProvider({ children }) {
   const [cars, setCars] = useState([]);
   
-  const fetchCarsForUser = async (userId) => {
+  const fetchCarsForUser = async (userId = null) => {
     if (!userId) return;
     console.log('In fetchCarsForUser');
     const carData = await fetchCars(userId);
     console.log('Received carData:', carData);
     setCars(carData);
-  };
+  };  
 
   return (
     <CarContext.Provider value={{ cars, setCars, fetchCarsForUser }}>
@@ -34,13 +35,22 @@ export function CarProvider({ children }) {
     </CarContext.Provider>
   );
 }
+*/
 
 function App() {
   const [userInfo, setUserInfo] = useState(null);
   const [userId, setUserId] = useState(null);
   const [cars, setCars] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  //const { fetchCarsForUser } = useContext(CarContext);
 
+  const fetchCarsForUser = async (userId = null) => {
+    if (!userId) return;
+    console.log('In fetchCarsForUser');
+    const carData = await fetchCars(userId);
+    console.log('Received carData:', carData);
+    setCars(carData);
+  };  
 
   // Add this function inside App.js
   const refreshFromLocalStorage = () => {
@@ -76,38 +86,34 @@ function App() {
     };
   }, [userId, userInfo]);
 
-  const fetchCarsForUser = async () => {
-    if (!userId) return;
-    console.log('In fetchCarsForUser');
-    const carData = await fetchCars(userId);
-    console.log('Received carData:', carData);
-    setCars(carData);
-  };
-
   // Second useEffect to get cars when userId changes
   useEffect(() => {
     fetchCarsForUser();
   }, [userId]);
 
 
-  const value = {
+  const carValue = {
+    cars,
+    setCars,
+    fetchCarsForUser
+  };
+  
+  const userValue = {
     userInfo,
     setUserInfo,
     userId,
     setUserId,
     isLoggedIn,
     setIsLoggedIn,
-    cars,
-    setCars,
     refreshFromLocalStorage
   };
 
   console.log("Current userInfo state:", userInfo);
 
   return (
-    
-    <CarProvider>
-      <UserContext.Provider value={value}>
+        
+    <CarContext.Provider value={carValue}>
+      <UserContext.Provider value={userValue}>
         <Router>
           <div className="App">
             <header>
@@ -152,7 +158,7 @@ function App() {
           </div>
         </Router>
       </UserContext.Provider>
-    </CarProvider>
+    </CarContext.Provider>
   );
 }
 

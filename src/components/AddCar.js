@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import './AddCar.css';
 import axios from 'axios';
+import { CarContext } from '../App.js';
 
-const AddCar = ({ cars, fetchCarsForUser }) => {
+const AddCar = ({ cars }) => {
+    
+    const { fetchCarsForUser } = useContext(CarContext);
     const apiUrl = process.env.REACT_APP_FLASK_API_URL;
     //console.log("API URL:", apiUrl);
     const [makes, setMakes] = useState([]);
