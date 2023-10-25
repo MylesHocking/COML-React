@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import './AddCar.css';
 import axios from 'axios';
 
-const AddCar = () => {
+const AddCar = ({ cars, fetchCarsForUser }) => {
     const apiUrl = process.env.REACT_APP_FLASK_API_URL;
-    console.log("API URL:", apiUrl);
+    //console.log("API URL:", apiUrl);
     const [makes, setMakes] = useState([]);
     const [models, setModels] = useState([]);
     const [modelVariants, setModelVariants] = useState([]);
@@ -18,6 +18,20 @@ const AddCar = () => {
     });
     
     const [imageURL, setImageURL] = useState(null);
+    const [selectedFile, setSelectedFile] = useState(null); // New state for selected file
+    const handleFileChange = (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const extension = file.name.split('.').pop().toLowerCase();
+    
+        if (!['jpg', 'jpeg', 'png', 'gif'].includes(extension)) {
+          alert('Invalid file type. Please upload a jpg, jpeg, png, or gif.');
+          return;
+        }
+      }      
+      setSelectedFile(file);
+    };
+    
 
     const fetchFirstImage = async (modelId) => {
         console.log("Fetching first image for model:", modelId);     
@@ -44,6 +58,7 @@ const AddCar = () => {
           setMakes(response.data);
         } catch (error) {
           console.error('Error fetching makes:', error);
+          alert('Error fetching car makes. Please try again later.');
         }
       };
   
@@ -92,11 +107,14 @@ const AddCar = () => {
       ...formData,
       [name]: value,
     });
+    if (name === 'model') {
+      setImageURL(null);
+    }
     // If the year & trim dropdown is selected, fetch the first image
     if (name === 'variant') {
         const variantData = JSON.parse(value);
         const { model_id } = variantData;
-        console.log("Variant Data:", variantData, "Model ID:", model_id);  // Add this line
+        console.log("Variant Data:", variantData, "Model ID:", model_id);  
         if (model_id) {
             await fetchFirstImage(model_id);
         }
@@ -108,26 +126,59 @@ const AddCar = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validate that rating and year purchased have been selected
+    if (formData.rating === '') {
+      alert("Please select a rating before submitting.");
+      return;
+    }
+    if (formData.year === '') {
+      alert("Please select a year before submitting.");
+      return;
+    }
+  
+    const formDataObj = new FormData();
+  
+    // Parsing the variant to get the model_id
+    const variantData = JSON.parse(formData.variant);
+    const { model_id } = variantData;
+    const user_id = localStorage.getItem("user_id");
+    console.log("User ID:", user_id);
+  
+    // Including model_id and other details in the payload
+    const payload = {
+      ...formData,
+      model_id,
+      user_id,
+      year_purchased: formData.year,
+    };
+  
+    // Append all the existing form data to FormData object
+    Object.keys(payload).forEach((key) => {
+      formDataObj.append(key, payload[key]);
+    });
+  
+    // Append the file, if there is one
+    if (selectedFile) {
+      formDataObj.append('file', selectedFile, selectedFile.name);
+    }
+  
     try {
-      // Parsing the variant to get the model_id
-      const variantData = JSON.parse(formData.variant);
-      const { model_id } = variantData;
-      const user_id = localStorage.getItem("user_id");
-      console.log("User ID:", user_id);
-      // Including model_id in the payload
-      const payload = {
-        ...formData,
-        model_id,
-        user_id,
-        year_purchased: formData.year,
-      };
-  
-      console.log("Submitting form data:", payload);
-  
-      const response = await axios.post(`${apiUrl}/api/add_car`, payload);
+      console.log("Submitting form data:", formDataObj);
+      for (var pair of formDataObj.entries()) {
+        console.log(pair[0] + ', ' + pair[1]); 
+      }
+      const response = await axios.post(`${apiUrl}/api/add_car`, formDataObj, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
   
       if (response.status === 200) {
         console.log("Successfully added car:", response.data);
+        // Update the cars in the context
+        fetchCarsForUser();
+  
         const successMessage = `${formData.make} ${formData.model} ${response.data.message}, please add next`;
         setSuccessMessage(successMessage);
         setFormData({
@@ -144,9 +195,6 @@ const AddCar = () => {
     }
   };
   
-
-
-
   return (
     
   <div className={"add-car-container"}>
@@ -232,6 +280,7 @@ const AddCar = () => {
               </select>
           </label>
         </div>
+        <div className="col"></div>
       </div>
       
       <div className="row">
@@ -247,8 +296,20 @@ const AddCar = () => {
           </label>
         </div>
       </div>
+      <div className="row">
+        <div className="col-full">  
+          <div className="image-section">
+            <h3>Add a Photo</h3>
+            <label>
+              Upload from Device:
+              <input type="file" accept="image/*" onChange={handleFileChange} />
+            </label>
+            <button type="button" onClick={() => {}}>Capture from Camera</button>
+          </div>
+        </div>
+      </div>
 
-      <button type="submit" class="get-started-button">Add Car</button>
+      <button type="submit" className="get-started-button">Add Car</button>
     </form>
       {successMessage && <p>{successMessage}</p>}
       {/* Image preview section */}
@@ -258,15 +319,6 @@ const AddCar = () => {
           {imageURL && <img src={imageURL} alt="Car" />}
         </div>
       )}
-      {/* Image upload section */}
-      <div className="image-section">
-        <h3>Add a Photo</h3>
-        <label>
-          Upload from Device:
-          <input type="file" accept="image/*" />
-        </label>
-        <button onClick={() => {}}>Capture from Camera</button>
-      </div>
     </div>
   );
 };

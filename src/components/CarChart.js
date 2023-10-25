@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import '../index.css';
 import axios from 'axios';
 import html2canvas from 'html2canvas';
+import { UserContext } from '../App';
 
-const CarChart = ({ cars }) => {  
+const CarChart = ({ cars, fetchCarsForUser, userId }) => { 
   const apiUrl = process.env.REACT_APP_FLASK_API_URL;
   console.log("Cars in CarChart:", cars);
   const [points, setPoints] = useState([]);
   const [xLabels, setXLabels] = useState([]);
   const [yLabels, setYLabels] = useState([]);
-
   const chartWidth = 750;
   const chartHeight = 400;
 
@@ -18,20 +18,34 @@ const CarChart = ({ cars }) => {
   const handlePointClick = async (car) => {
     console.log("Clicked on:", car);  
     // Fetch the high-res image
-    const imageUrl = await fetchHighResImage(car.model_id);  
+    const imageUrl = await fetchHighResImage(car);  
     setSelectedCar({...car, imageUrl});
   };
   
-  const fetchHighResImage = async (modelId) => {
+  const fetchHighResImage = async (car) => {
     try {
-        const response = await axios.get(`${apiUrl}/api/get_first_photo/${modelId}`);
-        return response.data.image_url;
+      let apiUrlToUse = null;
+      if (car.has_custom_image) {
+        // If car has a custom image, use the custom API endpoint
+        apiUrlToUse = `${apiUrl}/api/get_custom_photo/${car.user_car_association_id}`;
+      } else {
+        // Otherwise, use the standard API endpoint
+        apiUrlToUse = `${apiUrl}/api/get_first_photo/${car.model_id}`;
+      }
+      const response = await axios.get(apiUrlToUse);
+      return response.data.image_url;
     } catch (error) {
-        console.error('Error fetching high-res image:', error);
-        return null;
+      console.error('Error fetching high-res image:', error);
+      return null;
     }
   };
+  
 
+  useEffect(() => {
+    if (userId) {
+      fetchCarsForUser(userId);
+    }
+  }, [userId]);
 
   useEffect(() => {
     const yAxisLabels = [0, 2, 4, 6, 8, 10];
@@ -66,21 +80,29 @@ const CarChart = ({ cars }) => {
           let imageUrl = null;
       
           try {
-            const response = await axios.get(`${apiUrl}/api/get_first_thumb/${car.model_id}`);
+            // Conditionally set the API endpoint to fetch the image
+            let apiEndpoint;
+            if (car.has_custom_image) {
+              apiEndpoint = `${apiUrl}/api/get_custom_thumb/${car.user_car_association_id}`;
+            } else {
+              apiEndpoint = `${apiUrl}/api/get_first_thumb/${car.model_id}`;
+            }
+      
+            const response = await axios.get(apiEndpoint);
             imageUrl = response.data.image_url;
           } catch (error) {
             // handle error
           }
-          return {left, bottom, imageUrl};
+          return { left, bottom, imageUrl };
         });
       
         const newPointsWithImages = await Promise.all(fetchImagePromises);
         setPoints(newPointsWithImages);
-      };
+      };      
     
       fetchImages();
     }
-  }, [cars, apiUrl]);
+  }, [cars]);
 
   const downloadChart = () => {
     const chartElement = document.getElementsByClassName('chart-container')[0];

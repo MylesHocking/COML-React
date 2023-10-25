@@ -327,3 +327,21 @@ footer {
 .logout-container h1, .logout-container p {
   margin-bottom: 1rem;
 }
+
+/* ADD CAR PAGE */
+
+select {
+  margin-left: 10px;
+  justify-self: end;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+/* Example to place an item */
+.col {
+  grid-column: 1 / 3; /* Spans from line 1 to line 3 */
+}
+
