@@ -17,25 +17,6 @@ export function useUserContext() {
 }
 
 export const CarContext = createContext();
-/*
-export function CarProvider({ children }) {
-  const [cars, setCars] = useState([]);
-  
-  const fetchCarsForUser = async (userId = null) => {
-    if (!userId) return;
-    console.log('In fetchCarsForUser');
-    const carData = await fetchCars(userId);
-    console.log('Received carData:', carData);
-    setCars(carData);
-  };  
-
-  return (
-    <CarContext.Provider value={{ cars, setCars, fetchCarsForUser }}>
-      {children}
-    </CarContext.Provider>
-  );
-}
-*/
 
 function App() {
   const [userInfo, setUserInfo] = useState(null);
