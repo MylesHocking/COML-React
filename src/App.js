@@ -70,7 +70,7 @@ function App() {
   // Second useEffect to get cars when userId changes
   useEffect(() => {
     fetchCarsForUser();
-  }, [userId]);
+  }, [userId, fetchCarsForUser]);
 
 
   const carValue = {
