@@ -46,7 +46,7 @@ const CarChart = ({ cars, userId }) => {
     if (userId) {
       fetchCarsForUser(userId);
     }
-  }, [userId]);
+  }, [userId, fetchCarsForUser]);
 
   useEffect(() => {
     const yAxisLabels = [0, 2, 4, 6, 8, 10];
@@ -103,7 +103,7 @@ const CarChart = ({ cars, userId }) => {
     
       fetchImages();
     }
-  }, [cars]);
+  }, [cars, apiUrl]);
 
   const downloadChart = () => {
     const chartElement = document.getElementsByClassName('chart-container')[0];

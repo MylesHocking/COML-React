@@ -1,4 +1,4 @@
-import React, { useEffect, useState, createContext, useContext, lazy, Suspense} from 'react';
+import React, { useEffect, useState, createContext, useContext, useCallback, lazy, Suspense} from 'react';
 import { BrowserRouter as Router, Route, Routes,Link} from 'react-router-dom';
 import { fetchCars } from './utils/api.js';
 import logo from './assets/images/COMLlogosmol.png';
@@ -25,13 +25,13 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   //const { fetchCarsForUser } = useContext(CarContext);
 
-  const fetchCarsForUser = async (userId = null) => {
+  const fetchCarsForUser = useCallback(async (userId = null) => {
     if (!userId) return;
     console.log('In fetchCarsForUser');
     const carData = await fetchCars(userId);
     console.log('Received carData:', carData);
     setCars(carData);
-  };  
+  }, []);  
 
   // Add this function inside App.js
   const refreshFromLocalStorage = () => {
