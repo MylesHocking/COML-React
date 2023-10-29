@@ -26,6 +26,10 @@ function App() {
         <GoogleOAuthProvider
       clientId="1003699094925-sv0et1mp81ln28l24tccaosr60sbmuca.apps.googleusercontent.com"
       redirectUri={oauthRedirectUri}
+      //get more scopes 
+      //https://developers.google.com/identity/protocols/oauth2/scopes
+      scope="https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/plus.me"
+      
     >
       <GoogleLogin
         onSuccess={credentialResponse => {
@@ -37,11 +41,11 @@ function App() {
             token: credentialResponse.credential
           })
           .then(response => {
-            //console.log("Server response:", response);
+            console.log("Server response:", response);
             const { user_info } = response.data;
             // Save user_info in the local state or local storage
             localStorage.setItem("user_id", user_info.id);  // <-- Store user ID here
-            //console.log("User info:", user_info);
+            console.log("User info:", user_info);
             localStorage.setItem("userInfo", JSON.stringify(user_info));
             refreshFromLocalStorage(); 
             
