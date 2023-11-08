@@ -6,7 +6,7 @@ import 'slick-carousel/slick/slick-theme.css';
 const CarCarousel = React.memo(({ images, onSlideChange, onSelect }) => {
   const settings = {
     afterChange: currentSlide => onSlideChange(currentSlide),
-    dots: images?.length > 5, // Only show dots if there are more than 5 images
+    dots: images?.length > 6, // Only show dots if there are more than 5 images
     infinite: images?.length > 5, // Only set to infinite if more than 5 images
     speed: 500,
     slidesToShow: 6,

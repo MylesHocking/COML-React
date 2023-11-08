@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import './AddCar.css';
 import axios from 'axios';
 import { CarContext } from '../App.js';
@@ -40,7 +40,7 @@ const AddCar = ({ cars }) => {
       setSelectedFile(file);
     };
     
-    const fetchImages = async (startIndex, desiredCount) => {
+    const fetchImages = useCallback(async (startIndex, desiredCount) => {
       let fetchedCount = 0;
       let newImageDetails = [];
       let index = startIndex;
@@ -77,7 +77,7 @@ const AddCar = ({ cars }) => {
       }
     
       setImageURLs(prevURLs => [...prevURLs, ...newImageDetails]);
-    };   
+    }, [apiUrl, modelVariants]);   
 
     // Use useEffect to call fetchImages when a model is selected
     useEffect(() => {
@@ -85,7 +85,7 @@ const AddCar = ({ cars }) => {
         setImageURLs([]);
         fetchImages(0, 6); // Fetch the first 6 images
       }
-    }, [formData.model, apiUrl, modelVariants.length]);
+    }, [formData.model, fetchImages, modelVariants.length]);
 
     const loadMoreImages = () => {
       const startIndex = imageURLs.length; // Start from the end of the currently loaded images
@@ -224,7 +224,7 @@ const AddCar = ({ cars }) => {
         setShowCustomCarFields(true);
       }
     }
-    
+
     // Update formData and reset dependent fields as needed
     setFormData(prevFormData => ({
       ...prevFormData,
@@ -258,8 +258,6 @@ const AddCar = ({ cars }) => {
     }   
 
   };
-
-  const [successMessage, setSuccessMessage] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
