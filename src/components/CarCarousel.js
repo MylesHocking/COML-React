@@ -22,7 +22,7 @@ const CarCarousel = React.memo(({ images, onSlideChange, onSelect }) => {
     <Slider {...settings}>
     {images.map((imageDetail, index) => (
         <div key={index} onClick={() => onSelect(imageDetail)} className="thumbnail-container">
-            <img src={imageDetail.imageUrl} alt={`Car image ${imageDetail.year} ${imageDetail.trim}`} />
+            <img src={imageDetail.imageUrl} alt={`Car ${imageDetail.year} ${imageDetail.trim}`} />
             <div className="image-caption">
                 {imageDetail.year}{imageDetail.trim ? ` ${imageDetail.trim}` : ''}
             </div>
