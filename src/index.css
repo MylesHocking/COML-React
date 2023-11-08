@@ -108,8 +108,8 @@ footer {
 }
 
 .image-preview img {
-  max-width: 642px; /* or whatever width you want */
-  height: auto; /* maintain aspect ratio */
+  max-width: 320px; 
+  height: auto; 
   object-fit: cover; /* crop if needed */
 }
 

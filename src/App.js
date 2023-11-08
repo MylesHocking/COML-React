@@ -3,6 +3,9 @@ import { BrowserRouter as Router, Route, Routes,Link} from 'react-router-dom';
 import { fetchCars } from './utils/api.js';
 import logo from './assets/images/COMLlogosmol.png';
 import LandingPage from './components/LandingPage';
+import ShareForm from './components/ShareForm';
+
+
 
 const AddCar = lazy(() => import('./components/AddCar'));
 const CarChart = lazy(() => import('./components/CarChart'));
@@ -22,8 +25,41 @@ function App() {
   const [userInfo, setUserInfo] = useState(null);
   const [userId, setUserId] = useState(null);
   const [cars, setCars] = useState([]);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  //const { fetchCarsForUser } = useContext(CarContext);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); 
+  const [showShareForm, setShowShareForm] = useState(false);
+
+  const onShareClick = (e) => {
+    e.preventDefault(); // Prevent default link behavior
+    setShowShareForm(true); // Open the ShareForm modal
+  };
+
+  const sendShareEmails = async (email, message) => {
+    console.log('In sendShareEmails');
+    const recipients = email.split(','); // Assuming emails are comma-separated
+    const body = JSON.stringify({ recipients, message });
+  
+    try {
+      const response = await fetch('http://localhost:5000/api/share_chart', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: body,
+      });
+  
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+  
+      const responseData = await response.json();
+      console.log('Success:', responseData);
+      alert('Emails sent successfully!'); // Show a success message
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Failed to send emails.'); // Show an error message
+    }
+  };
+  
 
   const fetchCarsForUser = useCallback(async (userId = null) => {
     if (!userId) return;
@@ -48,7 +84,7 @@ function App() {
 
   // Modify your existing useEffect to use the new function
   useEffect(() => {
-    console.log('useEffect running', userId, userInfo);
+    //console.log('useEffect running', userId, userInfo);
 
     const handleStorageChange = (e) => {
       if (e.key === "user_id" || e.key === "userInfo") {
@@ -89,7 +125,7 @@ function App() {
     refreshFromLocalStorage
   };
 
-  console.log("Current userInfo state:", userInfo);
+  //console.log("Current userInfo state:", userInfo);
 
   return (
         
@@ -100,12 +136,12 @@ function App() {
             <header>
               <nav className="nav-container">
                 <div>
-                  <Link to="/">HOME</Link> | <Link to="/add-car">ADD CAR</Link> | <Link to="/chart">CHART</Link>
+                  <Link to="/">Home</Link> | <Link to="/add-car">Add</Link> | <Link to="/chart">Chart</Link>
                 </div>
                 <div>
                   {userInfo ? (
                     <span>
-                      Cars of {JSON.parse(userInfo).firstname}'s Life <Link to="/logout">(logout)</Link>
+                      <Link to="/" onClick={onShareClick}>Share</Link> |  {JSON.parse(userInfo).firstname} <Link to="/logout">(logout)</Link>
                     </span>
                   ) : (
                     <Link to="/login">Login</Link>
@@ -136,6 +172,11 @@ function App() {
               <footer className="footer">
                 <Link to="/privacy-policy">Privacy Policy</Link> | <Link to="/terms-of-service">Terms of Service</Link>
               </footer>
+              <ShareForm
+                isOpen={showShareForm}
+                onClose={() => setShowShareForm(false)}
+                sendShareEmails={sendShareEmails}
+              />
           </div>
         </Router>
       </UserContext.Provider>

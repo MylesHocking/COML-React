@@ -7,7 +7,7 @@ import { CarContext } from '../App.js';
 const CarChart = ({ cars, userId }) => {   
   const { fetchCarsForUser } = useContext(CarContext);
   const apiUrl = process.env.REACT_APP_FLASK_API_URL;
-  console.log("Cars in CarChart:", cars);
+  //console.log("Cars in CarChart:", cars);
   const [points, setPoints] = useState([]);
   const [xLabels, setXLabels] = useState([]);
   const [yLabels, setYLabels] = useState([]);

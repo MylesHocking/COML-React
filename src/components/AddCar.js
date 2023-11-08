@@ -2,11 +2,15 @@ import React, { useState, useEffect, useContext } from 'react';
 import './AddCar.css';
 import axios from 'axios';
 import { CarContext } from '../App.js';
+import CarCarousel from './CarCarousel';
+import SuccessModal from './SuccessModal';
 
 const AddCar = ({ cars }) => {
-    
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [modalMessage, setModalMessage] = useState('');
     const { fetchCarsForUser } = useContext(CarContext);
     const apiUrl = process.env.REACT_APP_FLASK_API_URL;
+    const [showCustomCarFields, setShowCustomCarFields] = useState(false);
     //console.log("API URL:", apiUrl);
     const [makes, setMakes] = useState([]);
     const [models, setModels] = useState([]);
@@ -20,7 +24,8 @@ const AddCar = ({ cars }) => {
       memories: '',
     });
     
-    const [imageURL, setImageURL] = useState(null);
+    const [imageURL, setImageURL] = useState(null); //single image
+    const [imageURLs, setImageURLs] = useState([]); //for gallery
     const [selectedFile, setSelectedFile] = useState(null); // New state for selected file
     const handleFileChange = (e) => {
       const file = e.target.files[0];
@@ -35,22 +40,125 @@ const AddCar = ({ cars }) => {
       setSelectedFile(file);
     };
     
+    const fetchImages = async (startIndex, desiredCount) => {
+      let fetchedCount = 0;
+      let newImageDetails = [];
+      let index = startIndex;
+    
+      while (fetchedCount < desiredCount && index < modelVariants.length) {
+        const batchOfVariants = modelVariants.slice(index, index + desiredCount - fetchedCount);
+    
+        try {
+          const imagesResponses = await Promise.all(
+            batchOfVariants.map(variant =>
+              axios.get(`${apiUrl}/api/get_first_thumb/${variant.model_id}`)
+                .then(response => ({
+                  imageUrl: response.data.image_url,
+                  modelId: variant.model_id,
+                  year: variant.year,
+                  trim: variant.trim,
+                  // Include any other variant details you need
+                }))
+                .catch(error => {
+                  console.error('Error fetching image for model ID:', variant.model_id, error);
+                  return null; // Return null for errors to filter them out later
+                })
+            )
+          );
+    
+          const validImageDetails = imagesResponses.filter(details => details && details.imageUrl);
+    
+          newImageDetails.push(...validImageDetails);
+          fetchedCount += validImageDetails.length;
+          index += desiredCount - fetchedCount; // Move the index forward by the number of images we still need
+        } catch (error) {
+          console.error('Error fetching images:', error);
+        }
+      }
+    
+      setImageURLs(prevURLs => [...prevURLs, ...newImageDetails]);
+    };   
 
-    const fetchFirstImage = async (modelId) => {
+    // Use useEffect to call fetchImages when a model is selected
+    useEffect(() => {
+      if (modelVariants.length > 0) {
+        setImageURLs([]);
+        fetchImages(0, 6); // Fetch the first 6 images
+      }
+    }, [formData.model, apiUrl, modelVariants.length]);
+
+    const loadMoreImages = () => {
+      const startIndex = imageURLs.length; // Start from the end of the currently loaded images
+      const count = 6; // Number of images to load each time
+      fetchImages(startIndex, count);
+    };
+
+    const handleSlideChange = (currentSlide) => {
+      // This function would be triggered after the carousel slide changes.
+      // You can use this to load more images if needed.
+      console.log("Current slide is:", currentSlide);
+    
+      // Load more images if the end of the carousel is reached
+      const threshold = 5; // Or whatever your threshold is
+      if (currentSlide >= imageURLs.length - threshold) {
+        // Implement the logic to fetch and add more images to imageURLs
+        loadMoreImages();
+      }
+    };    
+
+    const onSelectThumbnail = (selectedThumbnail) => {
+        const { modelId } = selectedThumbnail;
+        const selectedVariant = modelVariants.find(variant => variant.model_id === modelId);
+        console.log('Selected Thumbnail:', selectedThumbnail);
+        console.log('Selected Variant:', selectedVariant);
+        console.log('Current FormData:', formData);
+        if (selectedVariant) {
+
+          const stringifyVariant = (variant) => {
+            const keyOrder = ['model_id', 'year', 'trim', 'is_generic_model'];
+            return JSON.stringify(variant, keyOrder);
+          };
+          
+          // When setting the formData:
+          setFormData(prevFormData => ({
+            ...prevFormData,
+            variant: stringifyVariant({
+              model_id: selectedVariant.model_id,
+              year: selectedVariant.year,
+              trim: selectedVariant.trim,
+              is_generic_model: selectedVariant.is_generic_model
+            })
+          }));
+          
+          fetchFirstImage(modelId);
+        }
+      };
+    
+    const fetchFirstImage = async (modelId, isMultiple = false) => {
         console.log("Fetching first image for model:", modelId);     
         try {
-            console.log(`API URL for fetching first image: ${apiUrl}/api/get_first_photo/${modelId}`);
-
-            const response = await axios.get(`${apiUrl}/api/get_first_photo/${modelId}`);          
+            let apiEndpoint = isMultiple
+            ? `${apiUrl}/api/get_first_thumb/${modelId}`
+            : `${apiUrl}/api/get_first_photo/${modelId}`;
+        
+            console.log(`API URL for fetching first image:  ${apiEndpoint}`);
+    
+            const response = await axios.get(apiEndpoint);          
             const imageUrl = response.data.image_url;          
               
-            setImageURL(imageUrl);
-            console.log("Set Image URL:", imageUrl);
+            if (isMultiple) {
+                // Instead of setting the state here, just return the URL
+                return { imageUrl, modelId };
+            } else {
+                setImageURL(imageUrl);
+                console.log("Set Image URL:", imageUrl);
+            }
         } catch (error) {
             console.error('Error fetching first image:', error);
         }
-    };      
-
+    };
+  
+    
     const years = Array.from({ length: new Date().getFullYear() - 1944 }, (_, i) => 1945 + i);
 
     // Load makes when the component mounts
@@ -84,45 +192,71 @@ const AddCar = ({ cars }) => {
     fetchModels();
   }, [formData.make, apiUrl]);
   
-      // Load model variants whenever a model is selected
-      useEffect(() => {
-        if (formData.model) {
-          const fetchModelVariants = async () => {
-            try {
-              const response = await axios.get(`${apiUrl}/api/car_years_and_trims/${formData.model}`);
-              console.log("URL:", `${apiUrl}/api/car_years_and_trims/${formData.model}`);
-              setModelVariants(response.data);
-              console.log("Model Variants:", response.data);
-            } catch (error) {
-              console.error('Error fetching model variants:', error);
-            }
-          };
-        
-          fetchModelVariants();
+
+  // Load model variants whenever a model is selected
+  useEffect(() => {
+
+    if (formData.model) {
+      const fetchModelVariants = async () => {
+        try {
+          const response = await axios.get(`${apiUrl}/api/car_years_and_trims/${formData.model}`);
+          console.log("URL:", `${apiUrl}/api/car_years_and_trims/${formData.model}`);
+          setModelVariants(response.data);
+          console.log("Model Variants:", response.data);
+
+        } catch (error) {
+          console.error('Error fetching model variants:', error);
         }
-      }, [formData.model, apiUrl]);
-      
+      };
+    
+      fetchModelVariants();
+    } else {
+      // Clear the gallery when the model is not selected
+      setImageURLs([]);
+    }
+  }, [formData.model, apiUrl]);
 
   const handleInputChange = async (e) => {
     const { name, value } = e.target;
-    console.log("Field Changed:", name, "Value:", value);  // Log the name and value of the changed field
-    setFormData({
-      ...formData,
+
+    if (value === "custom-option") {
+      if (name === "make" || name === "model" || name === "variant") {
+        setShowCustomCarFields(true);
+      }
+    }
+    
+    // Update formData and reset dependent fields as needed
+    setFormData(prevFormData => ({
+      ...prevFormData,
       [name]: value,
-    });
-    if (name === 'model') {
-      setImageURL(null);
+      // Reset model, variant, and images when make changes
+      ...(name === 'make' && { model: '', variant: '', year: '', rating: '', memories: '' }),
+      // Reset variant and images when model changes
+      ...(name === 'model' && { variant: '', year: '', rating: '', memories: '' }),
+    }));
+  
+    // If make changes, reset models and modelVariants as well
+    if (name === 'make') {
+      setModels([]);
+      setModelVariants([]);
+    }
+  
+    // Clear image URLs if the make or model changes
+    if (name === 'make' || name === 'model') {
+      setImageURL(null); // Clear single image URL
+      setImageURLs([]);  // Clear all image URLs in the gallery
     }
     // If the year & trim dropdown is selected, fetch the first image
     if (name === 'variant') {
         const variantData = JSON.parse(value);
-        const { model_id } = variantData;
-        console.log("Variant Data:", variantData, "Model ID:", model_id);  
-        if (model_id) {
+        const { model_id, is_generic_model } = variantData;
+        
+        console.log("Variant Data:", variantData, "Model ID:", model_id, "Is Generic Model:", is_generic_model);  
+        if (model_id) {          
             await fetchFirstImage(model_id);
         }
-    }
-    
+    }   
+
   };
 
   const [successMessage, setSuccessMessage] = useState(null);
@@ -139,24 +273,28 @@ const AddCar = ({ cars }) => {
       alert("Please select a year before submitting.");
       return;
     }
-  
-    const formDataObj = new FormData();
-  
-    // Parsing the variant to get the model_id
-    const variantData = JSON.parse(formData.variant);
-    const { model_id } = variantData;
+    if (formData.variant === '' && (formData.custom_model === '' || formData.custom_variant === '')) {
+      alert("Please select a variant or enter custom model/variant before submitting.");
+      return;
+    }  
+    
     const user_id = localStorage.getItem("user_id");
     console.log("User ID:", user_id);
   
     // Including model_id and other details in the payload
-    const payload = {
-      ...formData,
-      model_id,
-      user_id,
-      year_purchased: formData.year,
+    let payload = {
+    ...formData,
+    user_id,
+    year_purchased: formData.year,
     };
-  
+
+    if (formData.variant) {
+      const variantData = JSON.parse(formData.variant);
+      payload = { ...payload, model_id: variantData.model_id };
+    }
+
     // Append all the existing form data to FormData object
+    const formDataObj = new FormData();
     Object.keys(payload).forEach((key) => {
       formDataObj.append(key, payload[key]);
     });
@@ -182,8 +320,23 @@ const AddCar = ({ cars }) => {
         // Update the cars in the context
         fetchCarsForUser();
   
-        const successMessage = `${formData.make} ${formData.model} ${response.data.message}, please add next`;
-        setSuccessMessage(successMessage);
+        let successMessage = '';
+        if (formData.custom_make && formData.custom_model) {
+          successMessage = `${formData.custom_make} ${formData.custom_model}`;
+        } else {
+          successMessage = `${formData.make} ${formData.model}`;
+        }
+        successMessage += ` ${response.data.message}, please add next`;
+        // Append the suggestion if it exists in the response
+        if (response.data.suggestion) {
+          successMessage += `\nSuggestion: ${response.data.suggestion}`;
+        }
+
+        // Set the complete message and open the modal
+        setModalMessage(successMessage);
+        setIsModalOpen(true);
+        console.log("Modal Message:", modalMessage, "Is Modal Open:", isModalOpen);
+
         setFormData({
             make: '',
             model: '',
@@ -202,56 +355,163 @@ const AddCar = ({ cars }) => {
     
   <div className={"add-car-container"}>
   <form onSubmit={handleSubmit} className="car-form">
-    <div className="row">
-      <div className="col">
-        <label>
-          Make:
-          <select
-              name="make"
-              value={formData.make}
-              onChange={handleInputChange}
-          >
-              <option value="" disabled>Select make</option>
-              {makes.map((make, index) => (
-              <option key={index} value={make}>{make}</option>
-              ))}
-          </select>
-          </label>
-        </div>
-        <div className="col">
-          <label>
-              Model:
-              <select
-                  name="model"
-                  value={formData.model}
-                  onChange={handleInputChange}
-              >
-                  <option value="" disabled>Select model</option>
-                  {models.map((model, index) => (
-                  <option key={index} value={model.name}>{model.name}</option>
-                  ))}
-              </select>
-          </label>
-        </div>
-        <div className="col">
-          <label>
-              Year and Trim:
-              <select
-                  name="variant"
-                  value={formData.variant}
-                  onChange={handleInputChange}
-              >
-                  <option value="" disabled>Select Year and Trim</option>
-                  {modelVariants.map((variant, index) => (                    
-                  <option key={index} value={JSON.stringify({ model_id: variant.model_id, year: variant.year, trim: variant.trim })}>
-                      {variant.year} {variant.trim ? `- ${variant.trim}` : ''}
-                  </option>
-          
-                  ))}
-              </select>
-          </label>
+    {showCustomCarFields ? (
+      <div className="custom-car-fields">
+        <div className="row">
+          <div className="col">
+            <label>
+              Make:              
+              <input 
+                className="custom-input"
+                type="text"
+                name="custom_make"
+                placeholder="Enter make"
+                value={formData.custom_make} 
+                onChange={handleInputChange} 
+              />
+            </label>
+          </div>
+          <div className="col">
+            <label>
+                Model:          
+              <input 
+                className="custom-input"
+                type="text"
+                name="custom_model"
+                placeholder="Enter model"
+                value={formData.custom_model} 
+                onChange={handleInputChange} 
+              />
+            </label>
+          </div>
+          <div className="col">
+            <label>
+                Year & Trim:  
+              <input 
+                className="custom-input"
+                type="text"
+                name="custom_variant"
+                placeholder="Enter year and trim"
+                value={formData.custom_variant} 
+                onChange={handleInputChange} 
+              />
+            </label>
+          </div>      
         </div>
       </div>
+    ) : (
+      <div className="standard-car-fields">
+        <div className="row">
+          <div className="col">
+            <label>
+              Make:
+              <select
+                  name="make"
+                  value={formData.make}
+                  onChange={handleInputChange}
+              >
+                  <option value="" disabled>Select make</option>
+                  {makes.map((make, index) => (
+                  <option key={index} value={make}>{make}</option>
+                  ))}
+                  <option value="custom-option">Add Custom Make</option>
+              </select>
+              </label>
+            </div>
+            <div className="col">
+              <label>
+                  Model:
+                  <select
+                      name="model"
+                      value={formData.model}
+                      onChange={handleInputChange}
+                      className="select-width"
+                  >
+                      <option value="" disabled>Select model</option>
+                      {models.map((model, index) => (
+                      <option key={index} value={model.name}>{model.name}</option>
+                      ))}
+                      <option value="custom-option">Add Custom Model</option>
+                  </select>
+              </label>
+            </div>
+            <div className="col">
+              <label>
+                  Year & Trim:
+                  <select
+                      key={formData.variant}
+                      name="variant"
+                      value={formData.variant}
+                      onChange={handleInputChange}
+                      className="select-width"
+                  >
+                      <option value="" disabled>Select Year and Trim</option>
+                      {modelVariants.map((variant, index) => (                    
+                      <option key={index} value={JSON.stringify({ model_id: variant.model_id, year: variant.year, trim: variant.trim, is_generic_model: variant.is_generic_model })}>
+                          {variant.year} {variant.trim ? `- ${variant.trim}` : ''}
+                      </option>
+              
+                      ))}
+                      <option value="custom-option">Add Custom Variant</option>
+                  </select>
+              </label>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Only show Gallery when not custom and make/model set */}
+      {!showCustomCarFields && formData.make && formData.model && (
+          <div className="row">          
+            <div className="slick-col-container">      
+              {imageURLs.length > 0 && (
+                <>
+                  <h3>{formData.make && formData.model ? `${formData.make} ${formData.model} Gallery` : 'Gallery'}</h3> 
+                  {
+                  console.log('Image URLs:', imageURLs)
+                  }             
+                  <CarCarousel
+                    images={imageURLs} // Pass the array of image URLs
+                    onSlideChange={handleSlideChange} // You need to define this function to handle slide changes
+                    onSelect={onSelectThumbnail} // Pass the callback for image selection
+                  />
+                </>
+              )}
+            </div>
+          </div>          
+        )}  
+      { formData.make && formData.model &&
+      (          
+        <div className="row">
+          <div className="col-full">
+            {imageURL && (
+              <>
+                <h4>{
+                  (() => {
+                    const { year, trim } = formData.variant ? JSON.parse(formData.variant) : {};
+                    return `${year || ''} ${trim || 'Selected Model'}`.trim();
+                  })()
+                }</h4>
+                <img className='add-car-preview' src={imageURL} alt="Car" />
+              </>
+            )}
+          </div>
+        </div>
+      )}
+      {(formData.make && formData.model) || (formData.custom_make && formData.custom_model) ? (                
+        <div className="row">        
+          <div className="col-full">  
+            <div>
+              <h3>Or add own Photo</h3>
+              <label>
+                Upload from Device:
+                <input type="file" accept="image/*" onChange={handleFileChange} />
+              </label>
+              <button type="button" onClick={() => {}}>Capture from Camera</button>
+            </div>
+          </div>
+        </div>                
+      ) : null }       
       <div className="row">        
         <div className="col">
           <label>
@@ -267,7 +527,7 @@ const AddCar = ({ cars }) => {
               ))}
               </select>
           </label>
-        </div>
+        </div>        
         <div className="col">
           <label>
               Rating:
@@ -284,8 +544,7 @@ const AddCar = ({ cars }) => {
           </label>
         </div>
         <div className="col"></div>
-      </div>
-      
+      </div>      
       <div className="row">
         <div className="col-full">
           <label>
@@ -299,29 +558,14 @@ const AddCar = ({ cars }) => {
           </label>
         </div>
       </div>
-      <div className="row">
-        <div className="col-full">  
-          <div className="image-section">
-            <h3>Add a Photo</h3>
-            <label>
-              Upload from Device:
-              <input type="file" accept="image/*" onChange={handleFileChange} />
-            </label>
-            <button type="button" onClick={() => {}}>Capture from Camera</button>
-          </div>
-        </div>
-      </div>
-
       <button type="submit" className="get-started-button">Add Car</button>
     </form>
-      {successMessage && <p>{successMessage}</p>}
-      {/* Image preview section */}
-      {(formData.make && formData.model) && (
-        <div className="image-preview">
-          <h3>That Make and Model looked like?</h3>
-          {imageURL && <img src={imageURL} alt="Car" />}
-        </div>
-      )}
+    <SuccessModal
+        isOpen={isModalOpen}
+        message={modalMessage}
+        onClose={() => setIsModalOpen(false)}
+    />
+     
     </div>
   );
 };

@@ -1,0 +1,51 @@
+/* The modal background overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  /* The modal content box */
+  .modal-content {
+    background: white;
+    padding: 25px;
+    border-radius: 5px;
+    position: relative;
+    z-index: 1001;
+    max-width: 500px;
+    width: 100%;
+  }
+  
+  /* The example chart image */
+  .example-chart-image {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin-bottom: 15px;
+  }
+  
+  /* The text area */
+  .textarea-invite {
+    width: 100%;
+    margin-bottom: 15px;
+  }
+  
+  /* The submit button */
+  .share-form-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: block;
+    width: 100%;
+  }
+  

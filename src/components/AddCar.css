@@ -24,3 +24,55 @@
   .image-preview h3 {
     font-size: 1.5em;
   }  
+ 
+  .add-car-preview {
+    max-width: 300px;
+  }
+
+  .select-width {
+    max-width: 150px; 
+    padding-left: 5px;
+  }
+  .custom-input {
+    max-width: 100px; 
+    padding-left: 5px;
+  }
+
+ .slick-slider {
+    margin-bottom: 30px; /* Add space for dots */
+  } 
+
+.slick-col-container {
+  max-width: 100vw;
+  width: 100%;
+}
+.thumbnail-container {
+  width: 50px;
+  height: 70px; /* Increased to fit the caption */
+  display: flex;
+  flex-direction: column; /* Stack image and caption vertically */
+  justify-content: center;
+  align-items: center;
+  margin: 5px;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.thumbnail-container img {
+  width: 50px;
+  left: 25px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.image-caption {
+  text-align: left;
+  text-indent: 10px;
+  font-size: 0.8em;
+  font-weight: bold;
+  color: #000; /* Make sure the color contrasts with the background */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100px;
+}
