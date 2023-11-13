@@ -2,12 +2,20 @@ import React from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import './CarCarousel.css';
 
 const CarCarousel = React.memo(({ images, onSlideChange, onSelect }) => {
+  console.log('num gallery images:', images?.length);
+  console.log('images:', images);
+  console.log('onSlideChange:', onSlideChange);
+  console.log('onSelect:', onSelect);
+  console.log('images?.length > 5:', images?.length > 5);
   const settings = {
     afterChange: currentSlide => onSlideChange(currentSlide),
-    dots: images?.length > 6, // Only show dots if there are more than 5 images
+    dots: images?.length > 5, // Only show dots if there are more than 5 images
     infinite: images?.length > 5, // Only set to infinite if more than 5 images
+    //show arros if more than 5 images
+    arrows: images?.length > 5,
     speed: 500,
     slidesToShow: 6,
     slidesToScroll: 5,

@@ -6,6 +6,7 @@ import { CarContext } from '../App.js';
 
 const CarChart = ({ cars, userId }) => {   
   const { fetchCarsForUser } = useContext(CarContext);
+  const { setCars } = useContext(CarContext);
   const apiUrl = process.env.REACT_APP_FLASK_API_URL;
   //console.log("Cars in CarChart:", cars);
   const [points, setPoints] = useState([]);
@@ -15,7 +16,94 @@ const CarChart = ({ cars, userId }) => {
   const chartHeight = 400;
 
   const [selectedCar, setSelectedCar] = useState(null);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editedMemories, setEditedMemories] = useState('');
 
+  const handleEditButtonClick = () => {
+    // If we're about to enter edit mode, set the memories
+    if (!isEditMode) {
+      setEditedMemories(selectedCar.memories);
+    }
+    setIsEditMode(!isEditMode); // Toggle edit mode
+  };
+
+  const updateCarData = (carId, newMemories) => {
+    const updatedCars = cars.map(car => 
+      car.id === carId ? { ...car, memories: newMemories } : car
+    );
+    setCars(updatedCars);
+    //set selected car memories to new memories
+    setSelectedCar({...selectedCar, memories: newMemories});
+  };
+
+  const handleEditCar = async (e) => {
+    e.preventDefault();
+
+    let formData = new FormData();
+    formData.append('memories', editedMemories);
+    // Append image file if a new one was chosen
+    // ...
+
+    try {
+      console.log('In handleEditCar', selectedCar.id );
+      const response = await fetch(`${apiUrl}/api/edit_car/${selectedCar.id}`, {
+        method: 'POST',
+        body: formData,
+        // Include headers, credentials, etc., as needed
+      });
+      const result = await response.json();
+      console.log(result);
+      // give result to user via popup
+      alert('Car updated successfully!');
+      updateCarData(selectedCar.id, editedMemories);
+
+      setEditedMemories('');
+      // Close the edit mode
+      setIsEditMode(false);
+
+    } catch (error) {
+      console.error('Error updating car:', error);
+    }
+  };
+
+  const handleImageChange = (e) => {
+    // Logic to handle image file selection
+    // You might need to set the state of a new image file here
+    console.log('In handleImageChange');
+  };
+
+  const handleDeleteButtonClick = async (carId) => {
+    if (window.confirm("Are you sure you want to delete this car?")) {
+      try {
+        console.log('In handleEditCar', selectedCar.id );
+        const response = await fetch(`${apiUrl}/api/delete_car/${selectedCar.id}`, {
+          method: 'DELETE',
+          // Include any necessary headers
+        });
+        if (response.ok) {
+          alert('Car deleted successfully!');
+          deleteCarData(selectedCar.id);
+        } else {
+          console.error("Failed to delete the car");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    }
+  };
+
+  const deleteCarData = (carId) => {
+    const updatedCars = cars.filter(car => car.id !== carId);
+    setCars(updatedCars);
+    
+    console.log('deleted cars:', updatedCars);
+    // Close the modal if the deleted car was selected
+    if (selectedCar && selectedCar.id === carId) {
+      setSelectedCar(null);
+    }
+  };
+  
+  
   const handlePointClick = async (car) => {
     console.log("Clicked on:", car);  
     // Fetch the high-res image
@@ -177,11 +265,11 @@ const CarChart = ({ cars, userId }) => {
                 className="car-label"
                 style={{ 
                   left: `${point.left -5}px`, 
-                  bottom: `${car.rating < 2 ? point.bottom + 20 : point.bottom - 60}px`
+                  bottom: `${car?.rating < 2 ? point.bottom + 20 : point.bottom - 60}px`
                 }}
               >
-                <span className="make">{car.make}</span><br />
-                <span className="model">{car.model}</span>
+                <span className="make">{car?.make}</span><br />
+                <span className="model">{car?.model}</span>
               </div>
             </React.Fragment>
           );
@@ -192,7 +280,17 @@ const CarChart = ({ cars, userId }) => {
               <span className="close" onClick={() => setSelectedCar(null)}>&times;</span>
               <h1>{selectedCar.make} {selectedCar.model}</h1>
               {selectedCar.imageUrl ? <img src={selectedCar.imageUrl} alt={`${selectedCar.make} ${selectedCar.model}`} /> : <p>No image available</p>}
-              <p>Memories: {selectedCar.memories}</p>
+              
+              {isEditMode ? (
+                // Edit form for updating memories and image
+                <form onSubmit={handleEditCar}>
+                  <textarea value={editedMemories} onChange={(e) => setEditedMemories(e.target.value)} />
+                  <input type="file" onChange={handleImageChange} />
+                  <button type="submit">Save Changes</button>
+                </form>
+              ) : (
+                <p>Memories: {selectedCar.memories}</p>
+              )}
               <div className="smaller-font">
                 {selectedCar.model_trim && <p>Trim: {selectedCar.model_trim}</p>}                
                 {selectedCar.model_year && <p>Made: {selectedCar.model_year}</p>}
@@ -223,8 +321,9 @@ const CarChart = ({ cars, userId }) => {
                 {selectedCar.model_0_to_100_kph && <p>0 to 100 KPH: {selectedCar.model_0_to_100_kph}</p>}
                 {selectedCar.model_co2 && <p>CO2: {selectedCar.model_co2}</p>}
               </div>
-
-
+              <button onClick={handleEditButtonClick}>Edit</button>
+              
+              <button onClick={handleDeleteButtonClick}>Delete</button>
             </div>
           </div>
         )}

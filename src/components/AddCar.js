@@ -81,9 +81,12 @@ const AddCar = ({ cars }) => {
 
     // Use useEffect to call fetchImages when a model is selected
     useEffect(() => {
-      if (modelVariants.length > 0) {
+      if (formData.model) {
+        console.log("Model Variants:", modelVariants);
+        console.log("OldModel Image URLs before reset:", imageURLs);
         setImageURLs([]);
-        fetchImages(0, 6); // Fetch the first 6 images
+        console.log("OldModel Image URLs after reset:", imageURLs);
+        fetchImages(0, 7); // Fetch the first 6 images
       }
     }, [formData.model, fetchImages, modelVariants.length]);
 
@@ -271,8 +274,8 @@ const AddCar = ({ cars }) => {
       alert("Please select a year before submitting.");
       return;
     }
-    if (formData.variant === '' && (formData.custom_model === '' || formData.custom_variant === '')) {
-      alert("Please select a variant or enter custom model/variant before submitting.");
+    if (formData.variant === '') {
+      alert("Please select a Year & Trim or enter generic/custom Year & Trim before submitting.");
       return;
     }  
     
@@ -324,7 +327,8 @@ const AddCar = ({ cars }) => {
         } else {
           successMessage = `${formData.make} ${formData.model}`;
         }
-        successMessage += ` ${response.data.message}, please add next`;
+        // give option to add another car or navigate to the chart      
+        successMessage += ` ${response.data.message}, please add the next one or go to your chart to see your cars!`;
         // Append the suggestion if it exists in the response
         if (response.data.suggestion) {
           successMessage += `\nSuggestion: ${response.data.suggestion}`;
@@ -450,7 +454,7 @@ const AddCar = ({ cars }) => {
                       </option>
               
                       ))}
-                      <option value="custom-option">Add Custom Variant</option>
+                      <option value="custom-option">Add Custom Year & Trim</option>
                   </select>
               </label>
             </div>
@@ -469,6 +473,7 @@ const AddCar = ({ cars }) => {
                   console.log('Image URLs:', imageURLs)
                   }             
                   <CarCarousel
+                    key={formData.model}
                     images={imageURLs} // Pass the array of image URLs
                     onSlideChange={handleSlideChange} // You need to define this function to handle slide changes
                     onSelect={onSelectThumbnail} // Pass the callback for image selection
