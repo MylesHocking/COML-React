@@ -82,10 +82,7 @@ const AddCar = ({ cars }) => {
     // Use useEffect to call fetchImages when a model is selected
     useEffect(() => {
       if (formData.model) {
-        console.log("Model Variants:", modelVariants);
-        console.log("OldModel Image URLs before reset:", imageURLs);
         setImageURLs([]);
-        console.log("OldModel Image URLs after reset:", imageURLs);
         fetchImages(0, 7); // Fetch the first 6 images
       }
     }, [formData.model, fetchImages, modelVariants.length]);
