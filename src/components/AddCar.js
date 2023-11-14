@@ -271,7 +271,7 @@ const AddCar = ({ cars }) => {
       alert("Please select a year before submitting.");
       return;
     }
-    if (formData.variant === '') {
+    if (!formData.custom_make && formData.variant === '') {
       alert("Please select a Year & Trim or enter generic/custom Year & Trim before submitting.");
       return;
     }  
@@ -359,7 +359,7 @@ const AddCar = ({ cars }) => {
         <div className="row">
           <div className="col">
             <label>
-              Make:              
+              Make :              
               <input 
                 className="custom-input"
                 type="text"
@@ -372,7 +372,7 @@ const AddCar = ({ cars }) => {
           </div>
           <div className="col">
             <label>
-                Model:          
+                Model :          
               <input 
                 className="custom-input"
                 type="text"
@@ -385,7 +385,7 @@ const AddCar = ({ cars }) => {
           </div>
           <div className="col">
             <label>
-                Year & Trim:  
+                Year & Trim :  
               <input 
                 className="custom-input"
                 type="text"
@@ -402,8 +402,8 @@ const AddCar = ({ cars }) => {
       <div className="standard-car-fields">
         <div className="row">
           <div className="col">
-            <label>
-              Make:
+            <label className="select-label">
+              Make&nbsp; 
               <select
                   name="make"
                   value={formData.make}
@@ -418,8 +418,8 @@ const AddCar = ({ cars }) => {
               </label>
             </div>
             <div className="col">
-              <label>
-                  Model:
+              <label className="select-label">
+                  Model&nbsp; 
                   <select
                       name="model"
                       value={formData.model}
@@ -434,54 +434,55 @@ const AddCar = ({ cars }) => {
                   </select>
               </label>
             </div>
-            <div className="col">
-              <label>
-                  Year & Trim:
-                  <select
-                      key={formData.variant}
-                      name="variant"
-                      value={formData.variant}
-                      onChange={handleInputChange}
-                      className="select-width"
-                  >
-                      <option value="" disabled>Select Year and Trim</option>
-                      {modelVariants.map((variant, index) => (                    
-                      <option key={index} value={JSON.stringify({ model_id: variant.model_id, year: variant.year, trim: variant.trim, is_generic_model: variant.is_generic_model })}>
-                          {variant.year} {variant.trim ? `- ${variant.trim}` : ''}
-                      </option>
-              
-                      ))}
-                      <option value="custom-option">Add Custom Year & Trim</option>
-                  </select>
-              </label>
-            </div>
           </div>
         </div>
       )}
 
-      {/* Only show Gallery when not custom and make/model set */}
+      
+      {/* Gallery Title and Year & Trim Dropdown */}
       {!showCustomCarFields && formData.make && formData.model && (
-          <div className="row">          
-            <div className="slick-col-container">      
-              {imageURLs.length > 0 && (
-                <>
-                  <h3>{formData.make && formData.model ? `${formData.make} ${formData.model} Gallery` : 'Gallery'}</h3> 
-                  {
-                  console.log('Image URLs:', imageURLs)
-                  }             
-                  <CarCarousel
-                    key={formData.model}
-                    images={imageURLs} // Pass the array of image URLs
-                    onSlideChange={handleSlideChange} // You need to define this function to handle slide changes
-                    onSelect={onSelectThumbnail} // Pass the callback for image selection
-                  />
-                </>
-              )}
-            </div>
-          </div>          
-        )}  
-      { formData.make && formData.model &&
-      (          
+        <div className="row">
+          <div className="col-left">
+            {imageURLs.length > 0 && (
+              <h3>{`${formData.make} ${formData.model} Gallery`}</h3>
+            )}
+          </div>
+          <div className="col-right">
+            <label className="select-label">
+                    Year & Trim&nbsp; 
+                    <select
+                        key={formData.variant}
+                        name="variant"
+                        value={formData.variant}
+                        onChange={handleInputChange}
+                        className="select-width"
+                    >
+                        <option value="" disabled>Select Year and Trim</option>
+                        {modelVariants.map((variant, index) => (                    
+                        <option key={index} value={JSON.stringify({ model_id: variant.model_id, year: variant.year, trim: variant.trim, is_generic_model: variant.is_generic_model })}>
+                            {variant.year} {variant.trim ? `- ${variant.trim}` : ''}
+                        </option>
+                
+                        ))}
+                        <option value="custom-option">Add Custom Year & Trim</option>
+                    </select>
+                </label>
+          </div>  
+        </div>
+      )}
+
+      {/* Gallery Component */}
+      {!showCustomCarFields && formData.make && formData.model && imageURLs.length > 0 && (
+        <CarCarousel
+          key={formData.model}
+          images={imageURLs}
+          onSlideChange={handleSlideChange}
+          onSelect={onSelectThumbnail}
+        />
+      )}
+
+      {/* Image Preview */}
+      {formData.make && formData.model && (
         <div className="row">
           <div className="col-full">
             {imageURL && (
@@ -498,20 +499,23 @@ const AddCar = ({ cars }) => {
           </div>
         </div>
       )}
-      {(formData.make && formData.model) || (formData.custom_make && formData.custom_model) ? (                
-        <div className="row">        
-          <div className="col-full">  
+
+      {/* Custom Photo Upload */}
+      {(formData.make && formData.model) || (formData.custom_make && formData.custom_model) && (
+        <div className="row">
+          <div className="col-full">
             <div>
-              <h3>Or add own Photo</h3>
-              <label>
-                Upload from Device:
-                <input type="file" accept="image/*" onChange={handleFileChange} />
-              </label>
-              <button type="button" onClick={() => {}}>Capture from Camera</button>
-            </div>
+                <h3>Or add own Photo</h3>
+                <label>
+                  Upload from Device:
+                  <input type="file" accept="image/*" onChange={handleFileChange} />
+                </label>
+                <button type="button" onClick={() => {}}>Capture from Camera</button>
+              </div>
           </div>
-        </div>                
-      ) : null }       
+        </div>
+      )}
+
       <div className="row">        
         <div className="col">
           <label>

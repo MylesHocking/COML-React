@@ -27,6 +27,7 @@ function App() {
   const [cars, setCars] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(false); 
   const [showShareForm, setShowShareForm] = useState(false);
+  const [isNavExpanded, setIsNavExpanded] = useState(false);
 
   const onShareClick = (e) => {
     e.preventDefault(); // Prevent default link behavior
@@ -135,24 +136,39 @@ function App() {
           <div className="App">
             <header>
               <nav className="nav-container">
-                <div>
-                  <Link to="/">Home</Link> | <Link to="/add-car">Add</Link> | <Link to="/chart">Chart</Link>
-                </div>
-                <div>
-                  {userInfo ? (
-                    <span>
-                      <Link to="/" onClick={onShareClick}>Share</Link> |  {JSON.parse(userInfo).firstname} <Link to="/logout">(logout)</Link>
-                    </span>
-                  ) : (
-                    <Link to="/login">Login</Link>
-                  )}
+                <button 
+                  className="burger-menu" 
+                  onClick={() => {
+                    setIsNavExpanded(!isNavExpanded);
+                    console.log("Nav expanded:", !isNavExpanded);
+                  }}
+                >
+                  ☰
+                </button>
+                <Link to="/">
+                  <img src={logo} alt="Cars of My Life Logo" className="logo" />
+                </Link>
+                <div className={`nav-links ${isNavExpanded ? 'expanded' : ''}`}>
+                  <div className="nav-links-left">
+                    <Link to="/add-car" onClick={() => setIsNavExpanded(false)}>Add</Link>
+                    <Link to="/chart" onClick={() => setIsNavExpanded(false)}>Chart</Link>
+                  </div>
+                  <div className="nav-links-right">
+                    {userInfo ? (
+                      <>
+                        <Link to="/" onClick={onShareClick}>Share</Link>
+                        {JSON.parse(userInfo).firstname} <Link to="/logout" onClick={() => setIsNavExpanded(false)}>(logout)</Link>
+                      </>
+                    ) : (
+                      <Link to="/login" onClick={() => setIsNavExpanded(false)}>Login</Link>
+                    )}
+                  </div>
                 </div>
               </nav>
-              <img src={logo} alt="Cars of My Life Logo" className="logo" />
               <div className="chrome-pipe"></div>
               <div className="chrome-pipe2"></div>
             </header>
-    
+
             <div className="chrome-bar"></div>
               <Suspense fallback={<div>Loading...</div>}>
                 <Routes>
@@ -170,7 +186,7 @@ function App() {
                 </Routes>
               </Suspense>
               <footer className="footer">
-                <Link to="/privacy-policy">Privacy Policy</Link> | <Link to="/terms-of-service">Terms of Service</Link>
+                <Link to="/privacy-policy">Privacy Policy</Link> <Link to="/terms-of-service">Terms of Service</Link>
               </footer>
               <ShareForm
                 isOpen={showShareForm}

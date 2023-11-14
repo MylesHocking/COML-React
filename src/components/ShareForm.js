@@ -20,8 +20,8 @@ const ShareForm = ({ isOpen, onClose, sendShareEmails }) => {
   }
 
   return (
-    <div className="modal-overlay">
-      <div className="modal-content">
+    <div className="share-modal-overlay">
+      <div className="share-modal-content">
         <form onSubmit={handleSubmit}>
           <h2>Share Your Car-Chart</h2>
           <img src="/assets/example-chart.jpg" alt="Example Car-Chart" className="example-chart-image" />

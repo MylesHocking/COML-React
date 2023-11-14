@@ -1,5 +1,5 @@
 /* The modal background overlay */
-.modal-overlay {
+.share-modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -13,7 +13,7 @@
   }
   
   /* The modal content box */
-  .modal-content {
+  .share-modal-content {
     background: white;
     padding: 25px;
     border-radius: 5px;
