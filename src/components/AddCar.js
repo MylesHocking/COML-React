@@ -349,7 +349,11 @@ const AddCar = ({ cars }) => {
       console.error("Error adding car:", error);
     }
   };
-  
+
+    console.log("Form Data.Make:", formData.make, "Form Data.Model:", formData.model, "Form Data.Custom Make:", formData.custom_make, "Form Data.Custom Model:", formData.custom_model)
+    const showCustomPhotoUpload = !!(formData.make && formData.model) || !!(formData.custom_make && formData.custom_model);
+    console.log("Show Custom Photo Upload:", showCustomPhotoUpload);
+
   return (
     
   <div className={"add-car-container"}>
@@ -444,7 +448,7 @@ const AddCar = ({ cars }) => {
         <div className="row">
           <div className="col-left">
             {imageURLs.length > 0 && (
-              <h3>{`${formData.make} ${formData.model} Gallery`}</h3>
+              <h5>{`${formData.make} ${formData.model} Gallery`}</h5>
             )}
           </div>
           <div className="col-right">
@@ -501,11 +505,11 @@ const AddCar = ({ cars }) => {
       )}
 
       {/* Custom Photo Upload */}
-      {(formData.make && formData.model) || (formData.custom_make && formData.custom_model) && (
+      {showCustomPhotoUpload && (
         <div className="row">
           <div className="col-full">
             <div>
-                <h3>Or add own Photo</h3>
+                <h5>Or add own Photo</h5>
                 <label>
                   Upload from Device:
                   <input type="file" accept="image/*" onChange={handleFileChange} />
