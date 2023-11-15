@@ -1,4 +1,4 @@
-.modal {
+.success-modal {
     position: fixed;
     top: 0;
     left: 0;
@@ -11,7 +11,7 @@
     z-index: 1000;
   }
   
-  .modal-content {
+  .success-modal-content {
     background-color: #fefefe;
     margin: 5% auto;
     padding: 20px;
@@ -19,15 +19,15 @@
     width: 80%;
   }
   
-  .close {
+  .success-close {
     color: #aaaaaa;
     float: right;
     font-size: 28px;
     font-weight: bold;
   }
   
-  .close:hover,
-  .close:focus {
+  .success-close:hover,
+  .success-close:focus {
     color: #000;
     text-decoration: none;
     cursor: pointer;

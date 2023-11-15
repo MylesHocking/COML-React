@@ -6,9 +6,9 @@ const SuccessModal = ({ isOpen, message, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="modal">
-      <div className="modal-content">
-        <span className="close" onClick={onClose}>&times;</span>
+    <div className="success-modal">
+      <div className="success-modal-content">
+        <span className="success-close" onClick={onClose}>&times;</span>
         <p>{message}</p>
       </div>
     </div>
