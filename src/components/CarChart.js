@@ -3,6 +3,7 @@ import '../index.css';
 import axios from 'axios';
 import html2canvas from 'html2canvas'
 import { CarContext } from '../App.js';
+import './CarChart.css';
 
 const CarChart = ({ cars, userId }) => {   
   const { fetchCarsForUser } = useContext(CarContext);
@@ -210,7 +211,9 @@ const CarChart = ({ cars, userId }) => {
   return (
     <>
     
-  
+    <div className="landscape-message">
+        For the best experience, please rotate your device to landscape mode.
+    </div>
     <div className="chart-container">
       <button className="download-button" onClick={downloadChart}>Download Chart</button>
       {(!cars || cars.length === 0) ? (

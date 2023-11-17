@@ -4,13 +4,14 @@ import { fetchCars } from './utils/api.js';
 import logo from './assets/images/COMLlogosmol.png';
 import LandingPage from './components/LandingPage';
 import ShareForm from './components/ShareForm';
-
+import './App.css';
 
 
 const AddCar = lazy(() => import('./components/AddCar'));
 const CarChart = lazy(() => import('./components/CarChart'));
 const LoginPage = lazy(() => import('./components/LoginPage'));
 const Logout = lazy(() => import('./components/Logout'));
+const Signup = lazy(() => import('./components/Signup'));
 const PrivacyPolicy = lazy(() => import('./components/PrivacyPolicy'));
 const TermsOfService = lazy(() => import('./components/TermsOfService'));
 
@@ -134,65 +135,69 @@ function App() {
       <UserContext.Provider value={userValue}>
         <Router>
           <div className="App">
-            <header>
-              <nav className="nav-container">
-                <button 
-                  className="burger-menu" 
-                  onClick={() => {
-                    setIsNavExpanded(!isNavExpanded);
-                    console.log("Nav expanded:", !isNavExpanded);
-                  }}
-                >
-                  ☰
-                </button>
-                <Link to="/">
-                  <img src={logo} alt="Cars of My Life Logo" className="logo" />
-                </Link>
-                <div className={`nav-links ${isNavExpanded ? 'expanded' : ''}`}>
-                  <div className="nav-links-left">
-                    <Link to="/add-car" onClick={() => setIsNavExpanded(false)}>Add</Link>
-                    <Link to="/chart" onClick={() => setIsNavExpanded(false)}>Chart</Link>
+           
+            <div className="main-container"> 
+              <header>
+                <nav className="nav-container">
+                  <button 
+                    className="burger-menu" 
+                    onClick={() => {
+                      setIsNavExpanded(!isNavExpanded);
+                      console.log("Nav expanded:", !isNavExpanded);
+                    }}
+                  >
+                    ☰
+                  </button>
+                  <Link to="/">
+                    <img src={logo} alt="Cars of My Life Logo" className="logo" />
+                  </Link>
+                  <div className={`nav-links ${isNavExpanded ? 'expanded' : ''}`}>
+                    <div className="nav-links-left">
+                      <Link to="/add-car" onClick={() => setIsNavExpanded(false)}>Add</Link>
+                      <Link to="/chart" onClick={() => setIsNavExpanded(false)}>Chart</Link>
+                    </div>
+                    <div className="nav-links-right">
+                      {userInfo ? (
+                        <>
+                          <Link to="/" onClick={onShareClick}>Share</Link>
+                          {JSON.parse(userInfo).firstname} <Link to="/logout" onClick={() => setIsNavExpanded(false)}>(logout)</Link>
+                        </>
+                      ) : (
+                        <Link to="/login" onClick={() => setIsNavExpanded(false)}>Login</Link>
+                      )}
+                    </div>
                   </div>
-                  <div className="nav-links-right">
-                    {userInfo ? (
-                      <>
-                        <Link to="/" onClick={onShareClick}>Share</Link>
-                        {JSON.parse(userInfo).firstname} <Link to="/logout" onClick={() => setIsNavExpanded(false)}>(logout)</Link>
-                      </>
-                    ) : (
-                      <Link to="/login" onClick={() => setIsNavExpanded(false)}>Login</Link>
-                    )}
-                  </div>
-                </div>
-              </nav>
-              <div className="chrome-pipe"></div>
-              <div className="chrome-pipe2"></div>
-            </header>
+                </nav>
+                <div className="chrome-pipe"></div>
+                <div className="chrome-pipe2"></div>
+              </header>
 
-            <div className="chrome-bar"></div>
-              <Suspense fallback={<div>Loading...</div>}>
-                <Routes>
-                  <Route path="/" element={<LandingPage />} />
-                  <Route path="/chart" element={
-                    <>
-                      <CarChart cars={cars} fetchCarsForUser={fetchCarsForUser} userId={userId} />  {/* Include the CarChart here */}
-                    </>
-                  } /> 
-                  <Route path="/add-car" element={<AddCar cars={cars} fetchCarsForUser={fetchCarsForUser} />} />    
-                  <Route path="/login" element={<LoginPage />} />
-                  <Route path="/logout" element={<Logout setIsLoggedIn={setIsLoggedIn} setCars={setCars}  />} />
-                  <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-                  <Route path="/terms-of-service" element={<TermsOfService />} />
-                </Routes>
-              </Suspense>
-              <footer className="footer">
-                <Link to="/privacy-policy">Privacy Policy</Link> <Link to="/terms-of-service">Terms of Service</Link>
-              </footer>
-              <ShareForm
-                isOpen={showShareForm}
-                onClose={() => setShowShareForm(false)}
-                sendShareEmails={sendShareEmails}
-              />
+              <div className="chrome-bar"></div>
+                <Suspense fallback={<div>Loading...</div>}>
+                  <Routes>
+                    <Route path="/" element={<LandingPage />} />
+                    <Route path="/chart" element={
+                      <>
+                        <CarChart cars={cars} fetchCarsForUser={fetchCarsForUser} userId={userId} />  {/* Include the CarChart here */}
+                      </>
+                    } /> 
+                    <Route path="/add-car" element={<AddCar cars={cars} fetchCarsForUser={fetchCarsForUser} />} />    
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/signup" element={<Signup />} />
+                    <Route path="/logout" element={<Logout setIsLoggedIn={setIsLoggedIn} setCars={setCars}  />} />
+                    <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                    <Route path="/terms-of-service" element={<TermsOfService />} />
+                  </Routes>
+                </Suspense>
+                <footer className="footer">
+                  <Link to="/privacy-policy">Privacy Policy</Link> <Link to="/terms-of-service">Terms of Service</Link>
+                </footer>
+                <ShareForm
+                  isOpen={showShareForm}
+                  onClose={() => setShowShareForm(false)}
+                  sendShareEmails={sendShareEmails}
+                />
+            </div>
           </div>
         </Router>
       </UserContext.Provider>

@@ -1,0 +1,68 @@
+.divider {
+  text-align: center;
+  margin: 20px 0;
+  position: relative;
+  overflow: hidden; /* Ensures that content does not flow outside the element's box */
+}
+
+.divider::before {
+  content: '';
+  background: #ccc;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 100%;
+  height: 1px;
+  z-index: 1; /* Ensure the line is behind the text */
+}
+
+.divider span {
+  position: relative;
+  display: inline-block;
+  padding: 0 10px;
+  background: #fff; /* The background color of your container */
+  z-index: 2; /* Ensure the text is above the line */
+}
+/* General input field styles */
+.input-field {
+  font-size: 16px; /* Adjust as needed */
+  padding: 10px 15px; /* Adjust padding to match the example */
+  margin-bottom: 10px; /* Space between the inputs */
+  border: 1px solid #ddd; /* Subtle border color */
+  border-radius: 4px; /* Rounded borders */
+  width: calc(100% - 30px); /* Full width minus padding */
+  box-sizing: border-box; /* Include padding and border in the element's width */
+  transition: border-color 0.2s; /* Smooth transition for border color */
+}
+
+/* Input field focus styles */
+.input-field:focus {
+  outline: none; /* Remove default focus outline */
+  border-color: #a3a3a3; /* Darker border color on focus */
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.1); /* Optional: add a glow effect on focus */
+}
+
+/* Placeholder text color */
+.input-field::placeholder {
+  color: #999; /* Placeholder text color */
+}
+
+/* Adjusting specific input types */
+.input-field[type="password"] {
+  /* Additional styles for password input if needed */
+}
+
+/* Styles for the login button, if you want to style it as well */
+.button {
+  padding: 10px 15px;
+  background-color: #0a58ca; /* Example: blue background */
+  color: white; /* White text */
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.button:hover {
+  background-color: #09448a; /* Darker blue on hover */
+}

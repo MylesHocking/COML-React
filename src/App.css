@@ -36,3 +36,28 @@
     transform: rotate(360deg);
   }
 }
+
+/* Main container */
+.main-container {
+  max-width: 1200px; /* Set your desired max-width */
+  margin: 0 auto; /* Centers the container */
+  width: 100%;
+  padding: 0 5px; /* Optional: Add some padding on the sides */
+  box-sizing: border-box; /* Include padding in the element's total width and height */
+}
+
+/* Media Query for Larger Screens */
+@media screen and (min-width: 1440px) {
+  .main-container {
+    max-width: 1400px; /* You can increase max-width for larger screens if desired */
+  }
+}
+
+/* Additional Media Queries for Different Screen Sizes */
+@media screen and (max-width: 1024px) {
+  .main-container {
+    padding: 0 0px; /* Optional: Add some padding on the sides */
+  }
+}
+
+/* You can add more media queries for other specific screen sizes as needed */
