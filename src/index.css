@@ -307,14 +307,65 @@ footer {
 
 /* MODAL */
 
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent backdrop */
+  z-index: 10; /* Ensure it's above other content */
+}
+
+.modal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.modal-content {
+  position: relative;
+  background-color: #fff;
+  padding-left: 20px;
+  width: 80%;
+  max-width: 80vw;
+  max-height: 80vh;  
+  overflow-y: auto;
+}
+
+.smaller_font {
+  font-size: 8px;
+}
+
+.close {
+  position: absolute;
+  right: 10px;
+  top: 5px;
+  font-size: 34px;
+  cursor: pointer;
+}
+
+.modal-content img {
+  width: 100%;
+  height: auto;
+}
+
 /* Media Query for Mobile View */
 @media screen and (max-width: 768px) { /* Adjust 768px according to your design's breakpoint */
   .modal {
     position: fixed; /* Fixed position to cover the whole screen */
     top: 0;
     left: 0;
-    width: 100%; /* Full screen width */
-    height: 100%; /* Full screen height */
+    width: 100vw; /* Full screen width */
+    height: 100vh; /* Full screen height */
     z-index: 1000; /* High z-index to ensure it's on top of other content */
     /* Additional styling for mobile view */
   }
@@ -330,47 +381,6 @@ footer {
     /* Additional styling for mobile view (e.g., padding, background) */
   }
 }
-
-.modal {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
-  z-index: 9999;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.modal-content {
-  position: relative;
-  background-color: #fff;
-  padding-left: 20px;
-  width: 80%;
-  max-width: 350px;
-  max-height: 390px;  
-  overflow-y: auto;
-}
-
-.smaller_font {
-  font-size: 8px;
-}
-
-.close {
-  position: absolute;
-  right: 10px;
-  top: 5px;
-  font-size: 28px;
-  cursor: pointer;
-}
-
-.modal-content img {
-  width: 100%;
-  height: auto;
-}
-
 
 /* LANDING PAGE */
 

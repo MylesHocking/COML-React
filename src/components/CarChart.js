@@ -278,55 +278,57 @@ const CarChart = ({ cars, userId }) => {
           );
         })}
         {selectedCar && (
-          <div className="modal">
-            <div className="modal-content">          
-              <span className="close" onClick={() => setSelectedCar(null)}>&times;</span>
-              <h1>{selectedCar.make} {selectedCar.model}</h1>
-              {selectedCar.imageUrl ? <img src={selectedCar.imageUrl} alt={`${selectedCar.make} ${selectedCar.model}`} /> : <p>No image available</p>}
-              
-              {isEditMode ? (
-                // Edit form for updating memories and image
-                <form onSubmit={handleEditCar}>
-                  <textarea value={editedMemories} onChange={(e) => setEditedMemories(e.target.value)} />
-                  <input type="file" onChange={handleImageChange} />
-                  <button type="submit">Save Changes</button>
-                </form>
-              ) : (
-                <p>Memories: {selectedCar.memories}</p>
-              )}
-              <div className="smaller-font">
-                {selectedCar.model_trim && <p>Trim: {selectedCar.model_trim}</p>}                
-                {selectedCar.model_year && <p>Made: {selectedCar.model_year}</p>}
-                {selectedCar.model_engine_cc && <p>Engine CC: {selectedCar.model_engine_cc}</p>}
-                {selectedCar.model_sold_in_us !== undefined && <p>Sold in US: {selectedCar.model_sold_in_us ? 'Yes' : 'No'}</p>}
-                {selectedCar.model_engine_type && <p>Engine Type: {selectedCar.model_engine_type}</p>}
-                {selectedCar.model_engine_position && <p>Engine Position: {selectedCar.model_engine_position}</p>}
-                {selectedCar.model_engine_cyl && <p>Engine Cylinders: {selectedCar.model_engine_cyl}</p>}
-                {selectedCar.model_drive && <p>Drive: {selectedCar.model_drive}</p>}
-                {selectedCar.model_engine_power_ps && <p>Engine Power (PS): {selectedCar.model_engine_power_ps}</p>}
-                {selectedCar.model_engine_torque_nm && <p>Engine Torque (Nm): {selectedCar.model_engine_torque_nm}</p>}
-                {selectedCar.model_engine_fuel && <p>Engine Fuel: {selectedCar.model_engine_fuel}</p>}
-                {selectedCar.model_weight_kg && <p>Weight (kg): {selectedCar.model_weight_kg}</p>}
-                {selectedCar.model_transmission_type && <p>Transmission Type: {selectedCar.model_transmission_type}</p>}
-                {selectedCar.model_doors && <p>Doors: {selectedCar.model_doors}</p>}
-                {selectedCar.model_body && <p>Body: {selectedCar.model_body}</p>}
-                {selectedCar.model_engine_valves_per_cyl && <p>Engine Valves Per Cylinder: {selectedCar.model_engine_valves_per_cyl}</p>}
-                {selectedCar.model_engine_power_rpm && <p>Engine Power RPM: {selectedCar.model_engine_power_rpm}</p>}
-                {selectedCar.model_engine_torque_rpm && <p>Engine Torque RPM: {selectedCar.model_engine_torque_rpm}</p>}
-                {selectedCar.model_engine_bore_mm && <p>Engine Bore (mm): {selectedCar.model_engine_bore_mm}</p>}
-                {selectedCar.model_engine_stroke_mm && <p>Engine Stroke (mm): {selectedCar.model_engine_stroke_mm}</p>}
-                {selectedCar.model_engine_compression && <p>Engine Compression: {selectedCar.model_engine_compression}</p>}
-                {selectedCar.model_seats && <p>Seats: {selectedCar.model_seats}</p>}
-                {selectedCar.model_lkm_mixed && <p>Mixed L/KM: {selectedCar.model_lkm_mixed}</p>}
-                {selectedCar.model_lkm_hwy && <p>Highway L/KM: {selectedCar.model_lkm_hwy}</p>}
-                {selectedCar.model_lkm_city && <p>City L/KM: {selectedCar.model_lkm_city}</p>}
-                {selectedCar.model_top_speed_kph && <p>Top Speed (KPH): {selectedCar.model_top_speed_kph}</p>}
-                {selectedCar.model_0_to_100_kph && <p>0 to 100 KPH: {selectedCar.model_0_to_100_kph}</p>}
-                {selectedCar.model_co2 && <p>CO2: {selectedCar.model_co2}</p>}
+          <div className="modal-backdrop">
+            <div className="modal">
+              <div className="modal-content">          
+                <span className="close" onClick={() => setSelectedCar(null)}>&times;</span>
+                <h1>{selectedCar.make} {selectedCar.model}</h1>
+                {selectedCar.imageUrl ? <img src={selectedCar.imageUrl} alt={`${selectedCar.make} ${selectedCar.model}`} /> : <p>No image available</p>}
+                
+                {isEditMode ? (
+                  // Edit form for updating memories and image
+                  <form onSubmit={handleEditCar}>
+                    <textarea value={editedMemories} onChange={(e) => setEditedMemories(e.target.value)} />
+                    <input type="file" onChange={handleImageChange} />
+                    <button type="submit">Save Changes</button>
+                  </form>
+                ) : (
+                  <p>Memories: {selectedCar.memories}</p>
+                )}
+                <div className="smaller-font">
+                  {selectedCar.model_trim && <p>Trim: {selectedCar.model_trim}</p>}                
+                  {selectedCar.model_year && <p>Made: {selectedCar.model_year}</p>}
+                  {selectedCar.model_engine_cc && <p>Engine CC: {selectedCar.model_engine_cc}</p>}
+                  {selectedCar.model_sold_in_us !== undefined && <p>Sold in US: {selectedCar.model_sold_in_us ? 'Yes' : 'No'}</p>}
+                  {selectedCar.model_engine_type && <p>Engine Type: {selectedCar.model_engine_type}</p>}
+                  {selectedCar.model_engine_position && <p>Engine Position: {selectedCar.model_engine_position}</p>}
+                  {selectedCar.model_engine_cyl && <p>Engine Cylinders: {selectedCar.model_engine_cyl}</p>}
+                  {selectedCar.model_drive && <p>Drive: {selectedCar.model_drive}</p>}
+                  {selectedCar.model_engine_power_ps && <p>Engine Power (PS): {selectedCar.model_engine_power_ps}</p>}
+                  {selectedCar.model_engine_torque_nm && <p>Engine Torque (Nm): {selectedCar.model_engine_torque_nm}</p>}
+                  {selectedCar.model_engine_fuel && <p>Engine Fuel: {selectedCar.model_engine_fuel}</p>}
+                  {selectedCar.model_weight_kg && <p>Weight (kg): {selectedCar.model_weight_kg}</p>}
+                  {selectedCar.model_transmission_type && <p>Transmission Type: {selectedCar.model_transmission_type}</p>}
+                  {selectedCar.model_doors && <p>Doors: {selectedCar.model_doors}</p>}
+                  {selectedCar.model_body && <p>Body: {selectedCar.model_body}</p>}
+                  {selectedCar.model_engine_valves_per_cyl && <p>Engine Valves Per Cylinder: {selectedCar.model_engine_valves_per_cyl}</p>}
+                  {selectedCar.model_engine_power_rpm && <p>Engine Power RPM: {selectedCar.model_engine_power_rpm}</p>}
+                  {selectedCar.model_engine_torque_rpm && <p>Engine Torque RPM: {selectedCar.model_engine_torque_rpm}</p>}
+                  {selectedCar.model_engine_bore_mm && <p>Engine Bore (mm): {selectedCar.model_engine_bore_mm}</p>}
+                  {selectedCar.model_engine_stroke_mm && <p>Engine Stroke (mm): {selectedCar.model_engine_stroke_mm}</p>}
+                  {selectedCar.model_engine_compression && <p>Engine Compression: {selectedCar.model_engine_compression}</p>}
+                  {selectedCar.model_seats && <p>Seats: {selectedCar.model_seats}</p>}
+                  {selectedCar.model_lkm_mixed && <p>Mixed L/KM: {selectedCar.model_lkm_mixed}</p>}
+                  {selectedCar.model_lkm_hwy && <p>Highway L/KM: {selectedCar.model_lkm_hwy}</p>}
+                  {selectedCar.model_lkm_city && <p>City L/KM: {selectedCar.model_lkm_city}</p>}
+                  {selectedCar.model_top_speed_kph && <p>Top Speed (KPH): {selectedCar.model_top_speed_kph}</p>}
+                  {selectedCar.model_0_to_100_kph && <p>0 to 100 KPH: {selectedCar.model_0_to_100_kph}</p>}
+                  {selectedCar.model_co2 && <p>CO2: {selectedCar.model_co2}</p>}
+                </div>
+                <button onClick={handleEditButtonClick}>Edit</button>
+                
+                <button onClick={handleDeleteButtonClick}>Delete</button>
               </div>
-              <button onClick={handleEditButtonClick}>Edit</button>
-              
-              <button onClick={handleDeleteButtonClick}>Delete</button>
             </div>
           </div>
         )}

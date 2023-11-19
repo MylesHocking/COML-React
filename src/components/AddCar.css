@@ -73,3 +73,23 @@
   text-overflow: ellipsis;
   max-width: 100px;
 }
+
+/* Media query for screens wider than 728px */
+@media screen and (min-width: 728px) {
+  .thumbnail-container {
+    width: 100px; /* Double the width */
+    height: 140px; /* Double the height */
+    /* Adjust other styles if necessary */
+  }
+
+  .thumbnail-container img {
+    width: 100px; /* Double the width */
+    height: 100px; /* Double the height */
+    /* Adjust other styles if necessary */
+  }
+
+  .image-caption {
+    /* Adjust styles if necessary, like increasing max-width */
+    max-width: 200px;
+  }
+}
