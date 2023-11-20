@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 
+const apiUrl = process.env.REACT_APP_API_URL;
+
 function UserList() {
   const [users, setUsers] = useState([]);
-  const apiUrl = process.env.REACT_APP_FLASK_API_URL;
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -17,7 +18,7 @@ function UserList() {
     };
 
     fetchUsers();
-  }, [ apiUrl ]);
+  }, []);
 
   return (
     <div>
