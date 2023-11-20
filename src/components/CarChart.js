@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
+import { useParams } from 'react-router-dom';
 import '../index.css';
 import axios from 'axios';
 import html2canvas from 'html2canvas'
@@ -6,7 +7,15 @@ import { CarContext } from '../App.js';
 import './CarChart.css';
 
 const CarChart = ({ cars, userId }) => {   
+  const { userId: urlUserId } = useParams();
   const { fetchCarsForUser } = useContext(CarContext);
+
+  useEffect(() => {
+    // Use the userId from URL if available, otherwise default to the prop userId
+    const idToUse = urlUserId || userId;
+    fetchCarsForUser(idToUse);
+  }, [urlUserId, userId, fetchCarsForUser]);
+
   const { setCars } = useContext(CarContext);
   const apiUrl = process.env.REACT_APP_FLASK_API_URL;
   //console.log("Cars in CarChart:", cars);
@@ -129,13 +138,6 @@ const CarChart = ({ cars, userId }) => {
       return null;
     }
   };
-  
-
-  useEffect(() => {
-    if (userId) {
-      fetchCarsForUser(userId);
-    }
-  }, [userId, fetchCarsForUser]);
 
   useEffect(() => {
     const yAxisLabels = [0, 2, 4, 6, 8, 10];

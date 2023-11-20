@@ -357,6 +357,8 @@ const AddCar = ({ cars }) => {
   return (
     
   <div className={"add-car-container"}>
+    
+  <h1>Add Car</h1>
   <form onSubmit={handleSubmit} className="car-form">
     {showCustomCarFields ? (
       <div className="custom-car-fields">

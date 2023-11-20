@@ -132,8 +132,9 @@ function App() {
             />
             <button className='button' type="submit">Login</button>
           </form>
+        <div className="divider"><span>or signup via email</span></div>
           <div>
-              Prefer to signup with your email not gmail?  <Link to="/signup">Email sign up here</Link>
+              <Link to="/signup">Sign up</Link>
           </div>
       </>
     </div>

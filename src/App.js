@@ -14,6 +14,7 @@ const Logout = lazy(() => import('./components/Logout'));
 const Signup = lazy(() => import('./components/Signup'));
 const PrivacyPolicy = lazy(() => import('./components/PrivacyPolicy'));
 const TermsOfService = lazy(() => import('./components/TermsOfService'));
+const UserList = lazy(() => import('./components/UserList'));
 
 export const UserContext = createContext();
 export function useUserContext() {
@@ -176,12 +177,13 @@ function App() {
                 <Suspense fallback={<div>Loading...</div>}>
                   <Routes>
                     <Route path="/" element={<LandingPage />} />
-                    <Route path="/chart" element={
+                    <Route path="/chart/:userId" element={
                       <>
                         <CarChart cars={cars} fetchCarsForUser={fetchCarsForUser} userId={userId} />  {/* Include the CarChart here */}
                       </>
                     } /> 
                     <Route path="/add-car" element={<AddCar cars={cars} fetchCarsForUser={fetchCarsForUser} />} />    
+                    <Route path="/userlist" element={<UserList />} />  
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/signup" element={<Signup />} />
                     <Route path="/logout" element={<Logout setIsLoggedIn={setIsLoggedIn} setCars={setCars}  />} />

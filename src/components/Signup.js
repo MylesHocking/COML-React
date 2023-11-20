@@ -60,11 +60,12 @@ const Signup = () => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <input type="text" value={firstname} onChange={(e) => setFirstname(e.target.value)} required placeholder="First Name" />
-      <input type="text" value={lastname} onChange={(e) => setLastname(e.target.value)} required placeholder="Last Name" />
-      <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="Email" />
-      <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="Password" />
-      <button type="submit">Sign Up</button>
+      <h1>Sign Up</h1>  
+      <input type="text" className="input-field" value={firstname} onChange={(e) => setFirstname(e.target.value)} required placeholder="First Name" />
+      <input type="text" className="input-field" value={lastname} onChange={(e) => setLastname(e.target.value)} required placeholder="Last Name" />
+      <input type="email" className="input-field" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="Email" />
+      <input type="password" className="input-field" value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="Password" />
+      <button className='button' type="submit">Sign Up</button>
     </form>
   );
 };
