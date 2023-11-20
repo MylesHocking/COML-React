@@ -17,7 +17,7 @@ function UserList() {
     };
 
     fetchUsers();
-  }, []);
+  }, [ apiUrl ]);
 
   return (
     <div>
