@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 
-const apiUrl = process.env.REACT_APP_API_URL;
+
+const apiUrl = process.env.REACT_APP_FLASK_API_URL;
 
 function UserList() {
   const [users, setUsers] = useState([]);
@@ -11,6 +12,7 @@ function UserList() {
     const fetchUsers = async () => {
       try {
         const response = await axios.get(`${apiUrl}/api/users`); // Adjust with your API endpoint
+        console.log("Fetched users:", response.data); // Add this line
         setUsers(response.data);
       } catch (error) {
         console.error('Error fetching users:', error);
