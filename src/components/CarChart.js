@@ -153,11 +153,17 @@ const CarChart = ({ cars, userId }) => {
 
       setPoints(newPoints);
       const uniqueYears = Array.from(new Set(cars.map(car => car.year_purchased))).sort((a, b) => a - b);
-      const newLabels = uniqueYears.map(year => ({
-        year,
-        left: ((year - earliestYear) / rangeOfYears) * chartWidth,
-      }));
-
+      const newLabels = uniqueYears.map((year, index) => {
+        // Check if the year is the first or last in the array
+        const isEdgeYear = index === 0 || index === uniqueYears.length - 1;
+        const displayYear = isEdgeYear ? year : year.toString().substr(-2); // Only use last two digits unless it's an edge year
+  
+        return {
+          year: displayYear,
+          left: ((year - earliestYear) / rangeOfYears) * chartWidth,
+        };
+      });
+  
       setXLabels(newLabels);
 
       setYLabels(yAxisLabels.map(label => ({
