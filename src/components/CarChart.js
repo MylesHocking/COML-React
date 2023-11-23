@@ -2,7 +2,6 @@ import React, { useEffect, useState, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import '../index.css';
 import axios from 'axios';
-import html2canvas from 'html2canvas'
 import { CarContext } from '../App.js';
 import './CarChart.css';
 
