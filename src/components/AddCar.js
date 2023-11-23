@@ -350,9 +350,9 @@ const AddCar = ({ cars }) => {
     }
   };
 
-    console.log("Form Data.Make:", formData.make, "Form Data.Model:", formData.model, "Form Data.Custom Make:", formData.custom_make, "Form Data.Custom Model:", formData.custom_model)
-    const showCustomPhotoUpload = !!(formData.make && formData.model) || !!(formData.custom_make && formData.custom_model);
-    console.log("Show Custom Photo Upload:", showCustomPhotoUpload);
+  //console.log("Form Data.Make:", formData.make, "Form Data.Model:", formData.model, "Form Data.Custom Make:", formData.custom_make, "Form Data.Custom Model:", formData.custom_model)
+  const showCustomPhotoUpload = !!(formData.make && formData.model) || !!(formData.custom_make && formData.custom_model);
+  //console.log("Show Custom Photo Upload:", showCustomPhotoUpload);
 
   return (
     
@@ -365,7 +365,7 @@ const AddCar = ({ cars }) => {
         <div className="row">
           <div className="col">
             <label>
-              Make :              
+              Make&nbsp;               
               <input 
                 className="custom-input"
                 type="text"
@@ -378,7 +378,7 @@ const AddCar = ({ cars }) => {
           </div>
           <div className="col">
             <label>
-                Model :          
+                Model&nbsp;           
               <input 
                 className="custom-input"
                 type="text"
@@ -391,7 +391,7 @@ const AddCar = ({ cars }) => {
           </div>
           <div className="col">
             <label>
-                Year & Trim :  
+                Year & Trim&nbsp;   
               <input 
                 className="custom-input"
                 type="text"
@@ -448,12 +448,12 @@ const AddCar = ({ cars }) => {
       {/* Gallery Title and Year & Trim Dropdown */}
       {!showCustomCarFields && formData.make && formData.model && (
         <div className="row">
-          <div className="col-left">
+          <div className="col">
             {imageURLs.length > 0 && (
               <h5>{`${formData.make} ${formData.model} Gallery`}</h5>
             )}
           </div>
-          <div className="col-right">
+          <div className="col">
             <label className="select-label">
                     Year & Trim&nbsp; 
                     <select
@@ -508,24 +508,31 @@ const AddCar = ({ cars }) => {
 
       {/* Custom Photo Upload */}
       {showCustomPhotoUpload && (
-        <div className="row">
-          <div className="col-full">
-            <div>
-                <h5>Or add own Photo</h5>
-                <label>
-                  Upload from Device:
-                  <input type="file" accept="image/*" onChange={handleFileChange} />
-                </label>
-                <button type="button" onClick={() => {}}>Capture from Camera</button>
-              </div>
+        <>
+          <div className="row">
+            <div className="col-full">
+              
+              <h5>Or add own Photo</h5>
+            </div>
           </div>
-        </div>
+          <div className="row">
+            <div className="col">            
+                  <label>
+                    Upload from Device:
+                    <input type="file" accept="image/*" onChange={handleFileChange} />
+                  </label>
+            </div>
+            <div className="col">
+                  <button type="button" onClick={() => {}}>Capture from Camera</button>
+            </div>
+            </div>
+          </>
       )}
 
       <div className="row">        
         <div className="col">
           <label>
-              Year Purchased:
+              Year Purchased&nbsp; 
               <select
               name="year"
               value={formData.year}
@@ -540,7 +547,7 @@ const AddCar = ({ cars }) => {
         </div>        
         <div className="col">
           <label>
-              Rating:
+              Rating&nbsp; 
               <select
                   name="rating"
                   value={formData.rating}
@@ -553,7 +560,6 @@ const AddCar = ({ cars }) => {
               </select>
           </label>
         </div>
-        <div className="col"></div>
       </div>      
       <div className="row">
         <div className="col-full">

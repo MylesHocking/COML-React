@@ -154,17 +154,17 @@ const CarChart = ({ cars, userId }) => {
       setPoints(newPoints);
       const uniqueYears = Array.from(new Set(cars.map(car => car.year_purchased))).sort((a, b) => a - b);
       const newLabels = uniqueYears.map((year, index) => {
-        // Check if the year is the first or last in the array
-        const isEdgeYear = index === 0 || index === uniqueYears.length - 1;
-        const displayYear = isEdgeYear ? year : year.toString().substr(-2); // Only use last two digits unless it's an edge year
-  
-        return {
-          year: displayYear,
-          left: ((year - earliestYear) / rangeOfYears) * chartWidth,
-        };
-      });
-  
-      setXLabels(newLabels);
+      // Check if the year is the first or last in the array
+      const isEdgeYear = index === 0 || index === uniqueYears.length - 1;
+      const displayYear = isEdgeYear ? year : year.toString().substr(-2); // Only use last two digits unless it's an edge year
+
+      return {
+        year: displayYear,
+        left: (((year - earliestYear) / rangeOfYears) * chartWidth)-10,
+      };
+    });
+
+    setXLabels(newLabels);
 
       setYLabels(yAxisLabels.map(label => ({
         label,
@@ -173,7 +173,7 @@ const CarChart = ({ cars, userId }) => {
       
       const fetchImages = async () => {
         const fetchImagePromises = cars.map(async (car) => {
-          const left = ((car.year_purchased - earliestYear) / rangeOfYears) * chartWidth;
+          const left = (((car.year_purchased - earliestYear) / rangeOfYears) * chartWidth);
           const bottom = (car.rating / 10) * chartHeight;
           let imageUrl = null;
       
@@ -202,20 +202,6 @@ const CarChart = ({ cars, userId }) => {
     }
   }, [cars, apiUrl]);
 
-  const downloadChart = () => {
-    const chartElement = document.getElementsByClassName('chart-container')[0];
-
-    html2canvas(chartElement).then((canvas) => {
-      const pngUrl = canvas.toDataURL("image/png");
-      let downloadLink = document.createElement('a');
-      downloadLink.href = pngUrl;
-      downloadLink.download = 'chart.png';
-      document.body.appendChild(downloadLink);
-      downloadLink.click();
-      document.body.removeChild(downloadLink);
-    });
-  }
-
   return (
     <>
     
@@ -223,7 +209,6 @@ const CarChart = ({ cars, userId }) => {
         For the best experience, please rotate your device to landscape mode.
     </div>
     <div className="chart-container">
-      <button className="download-button" onClick={downloadChart}>Download Chart</button>
       {(!cars || cars.length === 0) ? (
           <div className="no-cars-message">
             <a href="/add-car">Please Add Your First Car!</a>
@@ -238,8 +223,8 @@ const CarChart = ({ cars, userId }) => {
             return (
               <line 
                 key={index} 
-                x1={arr[index - 1].left+25} y1={chartHeight - arr[index - 1].bottom} 
-                x2={point.left+25} y2={chartHeight - point.bottom} 
+                x1={arr[index - 1].left} y1={chartHeight - arr[index - 1].bottom} 
+                x2={point.left} y2={chartHeight - point.bottom} 
                 stroke="black"
               />
             );

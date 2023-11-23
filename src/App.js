@@ -155,7 +155,8 @@ function App() {
                   <div className={`nav-links ${isNavExpanded ? 'expanded' : ''}`}>
                     <div className="nav-links-left">
                       <Link to="/add-car" onClick={() => setIsNavExpanded(false)}>Add</Link>
-                      <Link to="/chart" onClick={() => setIsNavExpanded(false)}>Chart</Link>
+                      <Link to={`/chart/${userId}`} onClick={() => setIsNavExpanded(false)}>Chart</Link>
+                      <Link to="/userlist" onClick={() => setIsNavExpanded(false)}>Feed</Link>
                     </div>
                     <div className="nav-links-right">
                       {userInfo ? (
