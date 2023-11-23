@@ -21,8 +21,55 @@ const CarChart = ({ cars, userId }) => {
   const [points, setPoints] = useState([]);
   const [xLabels, setXLabels] = useState([]);
   const [yLabels, setYLabels] = useState([]);
-  const chartWidth = 750;
-  const chartHeight = 400;
+
+  const [chartWidth, setChartWidth] = useState(0); 
+  const [chartHeight, setChartHeight] = useState(0);
+
+  function debounce(func, wait) {
+    let timeout;
+  
+    return function executedFunction(...args) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+  
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  };
+
+  useEffect(() => {
+  const updateChartDimensions = () => {
+    const chartContainer = document.querySelector('.chart-container');
+    if (chartContainer) {
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+
+      const deviceRatio = viewportHeight / viewportWidth;
+
+      const subtractionValue = chartContainer.offsetWidth < 450 ? 75 : 90;
+      const newWidth = chartContainer.offsetWidth - subtractionValue; 
+      const newHeight = newWidth * deviceRatio * 0.8;
+      console.log('deviceRatio:', deviceRatio, 'newWidth:', newWidth, 'newHeight:', newHeight, 'subtractionValue:', subtractionValue);
+
+      setChartWidth(newWidth); 
+      setChartHeight(newHeight);
+    }
+  };
+
+  const debouncedUpdateChartDimensions = debounce(updateChartDimensions, 250); // 250 ms
+
+  window.addEventListener('resize', debouncedUpdateChartDimensions);
+
+  // Initial call
+  updateChartDimensions();
+
+  return () => {
+    window.removeEventListener('resize', debouncedUpdateChartDimensions);
+  };
+}, []);
+
 
   const [selectedCar, setSelectedCar] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -199,7 +246,7 @@ const CarChart = ({ cars, userId }) => {
     
       fetchImages();
     }
-  }, [cars, apiUrl]);
+  }, [cars, apiUrl, chartWidth, chartHeight]);
 
   return (
     <>

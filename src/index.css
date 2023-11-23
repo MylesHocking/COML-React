@@ -53,7 +53,7 @@ header {
   height:116px; 
   margin: auto;
   position: absolute;  
-  top: 0;  
+  top: 3px;  
   left: 0;  
   right: 0;  
   bottom: 0;  
@@ -195,7 +195,6 @@ footer {
 
 .chart-container {
   position: relative;
-  width: 804px;
   padding-left: 40px;
   padding-bottom: 40px;
   padding-top: 40px;
@@ -204,10 +203,16 @@ footer {
   border-radius: 21px;
 }
 
+/* Responsive - Small Devices */
+@media screen and (max-width: 768px) {
+
+  .chart-container {
+    padding-left: 20px;
+  }
+}
 #chart {
   position: relative;
-  width: 800px;
-  height: 400px;
+  width: 100%;
 }
 
 .point {
@@ -256,7 +261,7 @@ footer {
 
 .line-container line {
   stroke: black;
-  stroke-width: 10;
+  stroke-width: 8;
   stroke-opacity: 0.3;
 }
 
@@ -330,6 +335,7 @@ footer {
   background-color: #fff;
   padding-left: 20px;
   width: 80%;
+  height: 80%;
   max-width: 80vw;
   max-height: 80vh;  
   overflow-y: auto;
@@ -364,16 +370,16 @@ footer {
     /* Additional styling for mobile view */
   }
 
-  .modal-content {
+  /* .modal-content {
     position: absolute;
     top: 50%;
     left: 5%;
     transform: translate(-50%, -50%);
     width: 90%; 
     max-width: 350px;
-    height: auto; /* Adjust as needed */
-    /* Additional styling for mobile view (e.g., padding, background) */
-  }
+    height: auto; Adjust as needed */
+    /* Additional styling for mobile view (e.g., padding, background) 
+  }*/
 }
 
 /* LANDING PAGE */

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, createContext, useContext, useCallback, lazy, Suspense} from 'react';
 import { BrowserRouter as Router, Route, Routes,Link} from 'react-router-dom';
 import { fetchCars } from './utils/api.js';
-import logo from './assets/images/COMLlogosmol.png';
+import logo from './assets/images/transparent_logo.png';
 import LandingPage from './components/LandingPage';
 import ShareForm from './components/ShareForm';
 import './App.css';
