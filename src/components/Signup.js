@@ -31,8 +31,8 @@ const Signup = () => {
         console.log("User info:", user_info);
         localStorage.setItem("userInfo", JSON.stringify(user_info));
         refreshFromLocalStorage();
-        // push to chart page
-        navigate('/chart');        
+        // push to chart page with user id
+        navigate('/chart/' + user_info.id);
     } catch (error) {
         console.error('Server error:', error);
       

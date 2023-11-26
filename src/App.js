@@ -15,6 +15,7 @@ const Signup = lazy(() => import('./components/Signup'));
 const PrivacyPolicy = lazy(() => import('./components/PrivacyPolicy'));
 const TermsOfService = lazy(() => import('./components/TermsOfService'));
 const UserList = lazy(() => import('./components/UserList'));
+const EventFeed = lazy(() => import('./components/Events'));
 
 export const UserContext = createContext();
 export function useUserContext() {
@@ -156,13 +157,14 @@ function App() {
                     <div className="nav-links-left">
                       <Link to="/add-car" onClick={() => setIsNavExpanded(false)}>Add</Link>
                       <Link to={`/chart/${userId}`} onClick={() => setIsNavExpanded(false)}>Chart</Link>
-                      <Link to="/userlist" onClick={() => setIsNavExpanded(false)}>Feed</Link>
+                      <Link to="/userlist" onClick={() => setIsNavExpanded(false)}>Chums</Link>
+                      <Link to="/events" onClick={() => setIsNavExpanded(false)}>Feed</Link>
                     </div>
                     <div className="nav-links-right">
                       {userInfo ? (
                         <>
                           <Link to="/" onClick={onShareClick}>Share</Link>
-                          {JSON.parse(userInfo).firstname} <Link to="/logout" onClick={() => setIsNavExpanded(false)}>(logout)</Link>
+                          <Link to="/logout" onClick={() => setIsNavExpanded(false)}>{JSON.parse(userInfo).firstname} (logout)</Link>
                         </>
                       ) : (
                         <Link to="/login" onClick={() => setIsNavExpanded(false)}>Login</Link>
@@ -185,6 +187,7 @@ function App() {
                     } /> 
                     <Route path="/add-car" element={<AddCar cars={cars} fetchCarsForUser={fetchCarsForUser} />} />    
                     <Route path="/userlist" element={<UserList />} />  
+                    <Route path="/events" element={<EventFeed />} />
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/signup" element={<Signup />} />
                     <Route path="/logout" element={<Logout setIsLoggedIn={setIsLoggedIn} setCars={setCars}  />} />

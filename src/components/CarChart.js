@@ -4,10 +4,13 @@ import '../index.css';
 import axios from 'axios';
 import { CarContext } from '../App.js';
 import './CarChart.css';
+import { fetchHighResImage } from '../utils/display_utils.js';
 
 const CarChart = ({ cars, userId }) => {   
   const { userId: urlUserId } = useParams();
   const { fetchCarsForUser } = useContext(CarContext);
+  const sessionUserId = localStorage.getItem("user_id");
+  const isCurrentUser = urlUserId === sessionUserId;
 
   useEffect(() => {
     // Use the userId from URL if available, otherwise default to the prop userId
@@ -163,26 +166,8 @@ const CarChart = ({ cars, userId }) => {
   const handlePointClick = async (car) => {
     console.log("Clicked on:", car);  
     // Fetch the high-res image
-    const imageUrl = await fetchHighResImage(car);  
+    const imageUrl = await fetchHighResImage(car, apiUrl);
     setSelectedCar({...car, imageUrl});
-  };
-  
-  const fetchHighResImage = async (car) => {
-    try {
-      let apiUrlToUse = null;
-      if (car.has_custom_image) {
-        // If car has a custom image, use the custom API endpoint
-        apiUrlToUse = `${apiUrl}/api/get_custom_photo/${car.user_car_association_id}`;
-      } else {
-        // Otherwise, use the standard API endpoint
-        apiUrlToUse = `${apiUrl}/api/get_first_photo/${car.model_id}`;
-      }
-      const response = await axios.get(apiUrlToUse);
-      return response.data.image_url;
-    } catch (error) {
-      console.error('Error fetching high-res image:', error);
-      return null;
-    }
   };
 
   useEffect(() => {
@@ -364,9 +349,15 @@ const CarChart = ({ cars, userId }) => {
                   {selectedCar.model_0_to_100_kph && <p>0 to 100 KPH: {selectedCar.model_0_to_100_kph}</p>}
                   {selectedCar.model_co2 && <p>CO2: {selectedCar.model_co2}</p>}
                 </div>
-                <button onClick={handleEditButtonClick}>Edit</button>
-                
-                <button onClick={handleDeleteButtonClick}>Delete</button>
+                {/* Conditionally render Edit and Delete buttons depending on if it's user's own chart */}
+                {console.log("isCurrentUser", isCurrentUser, "userId", userId)}
+                {isCurrentUser && (
+                  <div className="edit-delete-buttons">
+                    <button onClick={handleEditButtonClick}>Edit</button>
+                    
+                    <button onClick={handleDeleteButtonClick}>Delete</button>
+                  </div>
+                )}
               </div>
             </div>
           </div>

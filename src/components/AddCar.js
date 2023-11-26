@@ -364,10 +364,9 @@ const AddCar = ({ cars }) => {
       <div className="custom-car-fields">
         <div className="row">
           <div className="col">
-            <label>
-              Make&nbsp;               
+            <label>          
               <input 
-                className="custom-input"
+                className="input-field custom-input"
                 type="text"
                 name="custom_make"
                 placeholder="Enter make"
@@ -377,10 +376,9 @@ const AddCar = ({ cars }) => {
             </label>
           </div>
           <div className="col">
-            <label>
-                Model&nbsp;           
+            <label>         
               <input 
-                className="custom-input"
+                className="input-field custom-input"
                 type="text"
                 name="custom_model"
                 placeholder="Enter model"
@@ -391,9 +389,8 @@ const AddCar = ({ cars }) => {
           </div>
           <div className="col">
             <label>
-                Year & Trim&nbsp;   
               <input 
-                className="custom-input"
+                className="input-field custom-input"
                 type="text"
                 name="custom_variant"
                 placeholder="Enter year and trim"

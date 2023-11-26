@@ -30,7 +30,7 @@ const ShareForm = ({ isOpen, onClose, sendShareEmails }) => {
             value={message}
             onChange={(e) => setMessage(e.target.value)}
           />
-          <input
+          <input className='input-field'
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
