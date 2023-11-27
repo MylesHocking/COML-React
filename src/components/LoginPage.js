@@ -67,6 +67,31 @@ function App() {
   return (
     <div className="login-container">
       <h1>Login</h1>
+      <>
+          <form onSubmit={handleLoginSubmit}>
+            <input 
+              className="input-field" 
+              type="text" 
+              placeholder="Email" 
+              value={email} 
+              onChange={(e) => setEmail(e.target.value)} 
+            />
+            <input 
+              className="input-field" 
+              type="password" 
+              placeholder="Password" 
+              value={password} 
+              onChange={(e) => setPassword(e.target.value)} 
+            />
+            <button className='button' type="submit">Login</button>
+          </form>
+        <div className="divider"><span>or signup via email</span></div>
+          <div>
+              <Link to="/signup">Sign up</Link>
+          </div>
+        <div className="divider"><span>OR - Google SSO (test beta - dm myleshocking@gmail.com for access)</span></div>
+      </>
+      
       <div className="google-login-container">
         {isLoading ? (
           <div className="placeholder">Loading...</div>
@@ -112,30 +137,6 @@ function App() {
         </GoogleOAuthProvider>
         )}
       </div>
-      <>
-        <div className="divider"><span>OR</span></div>
-          <form onSubmit={handleLoginSubmit}>
-            <input 
-              className="input-field" 
-              type="text" 
-              placeholder="Email" 
-              value={email} 
-              onChange={(e) => setEmail(e.target.value)} 
-            />
-            <input 
-              className="input-field" 
-              type="password" 
-              placeholder="Password" 
-              value={password} 
-              onChange={(e) => setPassword(e.target.value)} 
-            />
-            <button className='button' type="submit">Login</button>
-          </form>
-        <div className="divider"><span>or signup via email</span></div>
-          <div>
-              <Link to="/signup">Sign up</Link>
-          </div>
-      </>
     </div>
   );
 }
