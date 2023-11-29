@@ -1,0 +1,41 @@
+.user-list-wrapper {
+    width: 60%; /* or any other suitable width */
+    margin: auto; /* centers the div */
+  }
+
+.user-list-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #ccc; /* Delineation between users */
+    padding: 10px 0;
+  }
+  
+  .user-name {
+    font-weight: bold;
+    margin-right: 15px;
+    color: #007bff; /* Adjust color as needed */
+    text-decoration: none;
+  }
+  
+  .user-name:hover {
+    text-decoration: underline;
+  }
+  .user-info {
+    flex-grow: 1; /* Allows this div to take up the available space */
+    text-align: left;
+  }
+  .friend-action-button {
+    margin-left: auto;
+    padding: 5px 10px;
+    background-color: #007bff; /* Adjust button color as needed */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .friend-action-button:hover {
+    background-color: #0056b3; /* Adjust for hover state */
+  }
+  

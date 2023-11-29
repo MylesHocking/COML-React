@@ -16,6 +16,7 @@ const PrivacyPolicy = lazy(() => import('./components/PrivacyPolicy'));
 const TermsOfService = lazy(() => import('./components/TermsOfService'));
 const UserList = lazy(() => import('./components/UserList'));
 const EventFeed = lazy(() => import('./components/Events'));
+const UserProfile = lazy(() => import('./components/UserProfile'));
 
 export const UserContext = createContext();
 export function useUserContext() {
@@ -164,7 +165,8 @@ function App() {
                       {userInfo ? (
                         <>
                           <Link to="/" onClick={onShareClick}>Share</Link>
-                          <Link to="/logout" onClick={() => setIsNavExpanded(false)}>{JSON.parse(userInfo).firstname} (logout)</Link>
+                          <Link to={`/user/${userId}`} onClick={() => setIsNavExpanded(false)}>{JSON.parse(userInfo).firstname}</Link>
+                          <Link to="/logout" onClick={() => setIsNavExpanded(false)}>(logout)</Link>
                         </>
                       ) : (
                         <Link to="/login" onClick={() => setIsNavExpanded(false)}>Login</Link>
@@ -188,6 +190,7 @@ function App() {
                     <Route path="/add-car" element={<AddCar cars={cars} fetchCarsForUser={fetchCarsForUser} />} />    
                     <Route path="/userlist" element={<UserList />} />  
                     <Route path="/events" element={<EventFeed />} />
+                    <Route path="/user/:userId" element={<UserProfile />} />
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/signup" element={<Signup />} />
                     <Route path="/logout" element={<Logout setIsLoggedIn={setIsLoggedIn} setCars={setCars}  />} />

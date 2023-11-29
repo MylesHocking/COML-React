@@ -39,8 +39,8 @@ function App() {
       localStorage.setItem("user_id", user_info.id);  // <-- Store user ID here
       localStorage.setItem("userInfo", JSON.stringify(user_info));
       refreshFromLocalStorage();
-      // push to chart page
-      navigate('/chart');        
+      // push to user's chart page
+      navigate('/chart/' + user_info.id);
     } catch (error) {
       console.error('Server error:', error);
     
@@ -123,7 +123,7 @@ function App() {
               
               //console.log("localstorage User info:", localStorage.getItem("userInfo"));
               // push to chart page
-              navigate('/chart');
+              navigate('/chart/' + user_info.id);
             })
             .catch(error => {
               console.log("Server error:", error);

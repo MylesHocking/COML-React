@@ -214,26 +214,44 @@ footer {
   position: relative;
   width: 100%;
 }
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
 
+.point, .line, .foreign-object, .car-label, .foreign-object div {
+  animation-name: fadeIn;
+  animation-fill-mode: forwards;
+  opacity: 0; /* Start with hidden points/lines */
+}
+.line {
+  stroke-linecap: round; 
+  /* other styles */
+}
 .point {
   position: absolute;
-  width: 1px;
-  height: 1px;
+  width: 50px;
+  height: 50px;
   background-color: transparent;
   border-radius: 50%;
   background-size: cover;  /* This will make sure the background image covers the entire element */
   background-position: center;  /* Center the background image */
+  z-index: 2;
 }
 
 .point img {
+  position: relative;
+  z-index: 999;
   width: 50px;
   height: 50px;
   border-radius: 50%;
   object-fit: cover;
 }
 
+
 .car-label {
   position: absolute;
+  color: black; 
   line-height: 0.6;
   text-align: center;
   font-size: 12px;  
@@ -245,6 +263,8 @@ footer {
   height: 30px; 
   padding: 2px 0;
   padding-top: 10px;
+  top: 50px;
+  z-index: 2;
 }
 
 .make, .model {
