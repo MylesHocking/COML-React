@@ -20,7 +20,7 @@ const CarChart = ({ cars, userId }) => {
       setCars([]); // Clear cars
       setPoints([]); // Clear points
     };
-  }, [urlUserId, userId, fetchCarsForUser]);
+  }, [urlUserId, userId, fetchCarsForUser]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const { setCars } = useContext(CarContext);
   const apiUrl = process.env.REACT_APP_FLASK_API_URL;
