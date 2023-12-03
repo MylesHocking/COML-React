@@ -5,6 +5,24 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useUserContext } from '../App.js';
 
+const LinkedInAuth = () => {
+  const CLIENT_ID = '776aytlm7vkif8';
+  const REDIRECT_URI = 'http://localhost:5000/api/linkedin/callback';
+  const STATE = 'iuhfgu98dfgh98';
+  const SCOPE = 'openid profile email';
+
+  const handleLinkedInLogin = () => {
+    const url = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&state=${STATE}&scope=${SCOPE}`;
+    window.location.href = url;
+  };
+
+  return (
+    <div>
+      <button onClick={handleLinkedInLogin}>Log in with LinkedIn</button>
+    </div>
+  );
+};
+
 function App() {
   const [email, setEmail] = useState(''); 
   const [password, setPassword] = useState('');   
@@ -13,13 +31,6 @@ function App() {
   const apiUrl = process.env.REACT_APP_FLASK_API_URL;
   const oauthRedirectUri = process.env.REACT_APP_OAUTH_REDIRECT_URI;
   const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    // Simulating an async operation, you could replace this with your real checks
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 500);
-  }, []);
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
@@ -89,6 +100,8 @@ function App() {
           <div>
               <Link to="/signup">Sign up</Link>
           </div>
+        <div className="divider"><span>or login with LinkedIn</span></div>
+          <LinkedInAuth /> {/* Use LinkedInAuth component here */}
         <div className="divider"><span>OR - Google SSO (test beta - dm myleshocking@gmail.com for access)</span></div>
       </>
       

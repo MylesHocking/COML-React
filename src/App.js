@@ -17,6 +17,7 @@ const TermsOfService = lazy(() => import('./components/TermsOfService'));
 const UserList = lazy(() => import('./components/UserList'));
 const EventFeed = lazy(() => import('./components/Events'));
 const UserProfile = lazy(() => import('./components/UserProfile'));
+const LinkedInCallbackHandler = lazy(() => import('./components/LinkedInCallbackHandler'));
 
 export const UserContext = createContext();
 export function useUserContext() {
@@ -74,7 +75,7 @@ function App() {
     setCars(carData);
   }, []);  
 
-  // Add this function inside App.js
+  
   const refreshFromLocalStorage = () => {
     const storedUserId = localStorage.getItem('user_id');
     const storedUserInfo = localStorage.getItem('userInfo');
@@ -196,6 +197,7 @@ function App() {
                     <Route path="/logout" element={<Logout setIsLoggedIn={setIsLoggedIn} setCars={setCars}  />} />
                     <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                     <Route path="/terms-of-service" element={<TermsOfService />} />
+                    <Route path="/linkedin-callback" element={<LinkedInCallbackHandler />} />
                   </Routes>
                 </Suspense>
                 <footer className="footer">

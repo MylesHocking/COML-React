@@ -84,7 +84,16 @@ function EventFeed() {
                 return (
                     <div className="card">
                         <div className="card-body">
-                        Welcome <h4 className="card-title"> {event.firstname} {event.lastname} </h4>                        
+                        Welcome <h4 className="card-title"> {event.firstname} {event.lastname} </h4>  
+                        {event.profile_picture ? 
+                            <img 
+                                src={event.profile_picture} 
+                                alt={`${event.firstname} ${event.lastname}`} 
+                                style={{width:'50px', maxWidth: '350px', height: 'auto', margin: '0 auto', display: 'block' }} 
+                            /> 
+                            : 
+                            <p>No profile pic yet</p>
+                        }                    
                         <p>to Cars Of My.Life!</p>
                         </div>
                     </div>
