@@ -5,9 +5,12 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useUserContext } from '../App.js';
 
+const apiUrl = process.env.REACT_APP_FLASK_API_URL;
+const oauthRedirectUri = process.env.REACT_APP_OAUTH_REDIRECT_URI;
+
 const LinkedInAuth = () => {
   const CLIENT_ID = '776aytlm7vkif8';
-  const REDIRECT_URI = 'http://localhost:5000/api/linkedin/callback';
+  const REDIRECT_URI = '$apiUrl/api/linkedin/callback';
   const STATE = 'iuhfgu98dfgh98';
   const SCOPE = 'openid profile email';
 
@@ -28,8 +31,6 @@ function App() {
   const [password, setPassword] = useState('');   
   const { refreshFromLocalStorage } = useUserContext();
   const navigate = useNavigate();
-  const apiUrl = process.env.REACT_APP_FLASK_API_URL;
-  const oauthRedirectUri = process.env.REACT_APP_OAUTH_REDIRECT_URI;
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
