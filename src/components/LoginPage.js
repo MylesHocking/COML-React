@@ -32,6 +32,16 @@ function App() {
   const oauthRedirectUri = process.env.REACT_APP_OAUTH_REDIRECT_URI;
   const [isLoading, setIsLoading] = useState(true);
 
+  useEffect(() => {
+    // Simulating an async operation
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
+  
+    // Cleanup function to clear the timeout if the component unmounts
+    return () => clearTimeout(timer);
+  }, []);
+  
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     // Implement your login logic here

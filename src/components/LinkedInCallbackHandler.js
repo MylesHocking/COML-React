@@ -20,7 +20,7 @@ const LinkedInCallbackHandler = () => {
     localStorage.setItem("userInfo", JSON.stringify(user_info));
     // Navigate to user's chart page
     navigate('/chart/' + user_id);
-  }, [navigate]);
+  }, [navigate, location.search]);
 
   return <div>Loading...</div>;
 };
