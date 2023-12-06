@@ -5,6 +5,7 @@ import logo from './assets/images/transparent_logo.png';
 import LandingPage from './components/LandingPage';
 import ShareForm from './components/ShareForm';
 import './App.css';
+import PrivateRoute from './PrivateRoute'; 
 
 
 const AddCar = lazy(() => import('./components/AddCar'));
@@ -183,20 +184,37 @@ function App() {
                 <Suspense fallback={<div>Loading...</div>}>
                   <Routes>
                     <Route path="/" element={<LandingPage />} />
-                    <Route path="/chart/:userId" element={
-                      <>
-                        <CarChart cars={cars} fetchCarsForUser={fetchCarsForUser} userId={userId} />  {/* Include the CarChart here */}
-                      </>
-                    } /> 
-                    <Route path="/add-car" element={<AddCar cars={cars} fetchCarsForUser={fetchCarsForUser} />} />    
-                    <Route path="/userlist" element={<UserList />} />  
-                    <Route path="/events" element={<EventFeed />} />
-                    <Route path="/user/:userId" element={<UserProfile />} />
                     <Route path="/login" element={<LoginPage />} />
-                    <Route path="/signup" element={<Signup />} />
-                    <Route path="/logout" element={<Logout setIsLoggedIn={setIsLoggedIn} setCars={setCars}  />} />
                     <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                     <Route path="/terms-of-service" element={<TermsOfService />} />
+                    <Route path="/signup" element={<Signup />} />
+                    {/* Protected Routes */}
+                    <Route path="/chart/:userId" element={
+                      <PrivateRoute isLoggedIn={isLoggedIn}>
+                        <CarChart cars={cars} fetchCarsForUser={fetchCarsForUser} userId={userId} />
+                      </PrivateRoute>
+                    } />
+                    <Route path="/add-car" element={
+                      <PrivateRoute isLoggedIn={isLoggedIn}>
+                        <AddCar cars={cars} fetchCarsForUser={fetchCarsForUser} />
+                      </PrivateRoute>
+                    } />
+                    <Route path="/userlist" element={
+                      <PrivateRoute isLoggedIn={isLoggedIn}>
+                        <UserList />
+                      </PrivateRoute>
+                    } />
+                    <Route path="/events" element={
+                      <PrivateRoute isLoggedIn={isLoggedIn}>
+                        <EventFeed />
+                      </PrivateRoute>
+                    } />
+                    <Route path="/user/:userId" element={
+                      <PrivateRoute isLoggedIn={isLoggedIn}>
+                        <UserProfile />
+                      </PrivateRoute>
+                    } />
+                    <Route path="/logout" element={<Logout setIsLoggedIn={setIsLoggedIn} setCars={setCars}  />} />
                     <Route path="/linkedin-callback" element={<LinkedInCallbackHandler />} />
                   </Routes>
                 </Suspense>

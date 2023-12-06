@@ -8,14 +8,14 @@ const LandingPage = () => {
       <p>
         Create and share visual timelines of the cars you've owned or dream of owning.
       </p>
+      <Link to="/login"  style={{ display: 'block' }}>
+        <img src="/assets/examplechart2.png" alt="Example Car Chart" style={{ cursor: 'pointer', width : '40%' }} />
+      </Link>  
       <Link to="/login">
         <button className="get-started-button">
           Get Started
         </button>
       </Link>
-      <p>
-        &nbsp;
-      </p>
     </div>
   );
 };

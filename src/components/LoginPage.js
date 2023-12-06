@@ -4,6 +4,7 @@ import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useUserContext } from '../App.js';
+import './LoginPage.css';
 
 const apiUrl = process.env.REACT_APP_FLASK_API_URL;
 const oauthRedirectUri = process.env.REACT_APP_OAUTH_REDIRECT_URI;
@@ -21,7 +22,9 @@ const LinkedInAuth = () => {
 
   return (
     <div>
-      <button onClick={handleLinkedInLogin}>Log in with LinkedIn</button>
+      <Link to="/login"  onClick={handleLinkedInLogin}>
+        <img src="/assets/linkedin/Non-Retina/Sign-in-Large---Default.png" alt="LinkedIn Login" id="linkedinBtn"/>
+      </Link>
     </div>
   );
 };
@@ -32,7 +35,14 @@ function App() {
   const { refreshFromLocalStorage } = useUserContext();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
-
+  
+  const handleLoginSuccess = (user_info) => {
+    localStorage.setItem("user_id", user_info.id); 
+    localStorage.setItem("userInfo", JSON.stringify(user_info));
+    refreshFromLocalStorage();
+    navigate('/chart/' + user_info.id);
+  };
+  
   useEffect(() => {
     // Simulating an async operation
     const timer = setTimeout(() => {
@@ -57,12 +67,13 @@ function App() {
       console.log('Server response:', response);
       const { user_info } = response.data;
       console.log("User info:", user_info);
+      handleLoginSuccess(user_info);
       // Save user_info in the local state or local storage
-      localStorage.setItem("user_id", user_info.id);  // <-- Store user ID here
-      localStorage.setItem("userInfo", JSON.stringify(user_info));
-      refreshFromLocalStorage();
+      //localStorage.setItem("user_id", user_info.id);  // <-- Store user ID here
+      //localStorage.setItem("userInfo", JSON.stringify(user_info));
+      //refreshFromLocalStorage();
       // push to user's chart page
-      navigate('/chart/' + user_info.id);
+      //navigate('/chart/' + user_info.id);
     } catch (error) {
       console.error('Server error:', error);
     
@@ -90,6 +101,9 @@ function App() {
     <div className="login-container">
       <h1>Login</h1>
       <>
+        <div className="divider"><span>Signup/Login with LinkedIn</span></div>
+          <LinkedInAuth /> {/* Use LinkedInAuth component here */}
+        <div className="divider"><span>Signup/Login via email</span></div>
           <form onSubmit={handleLoginSubmit}>
             <input 
               className="input-field" 
@@ -107,13 +121,11 @@ function App() {
             />
             <button className='button' type="submit">Login</button>
           </form>
-        <div className="divider"><span>or signup via email</span></div>
           <div>
-              <Link to="/signup">Sign up</Link>
+              <br></br>
+              <Link to="/signup"><button className='button' type="submit">Sign up</button></Link>
           </div>
-        <div className="divider"><span>or login with LinkedIn</span></div>
-          <LinkedInAuth /> {/* Use LinkedInAuth component here */}
-        <div className="divider"><span>OR - Google SSO (test beta - dm myleshocking@gmail.com for access)</span></div>
+        <div className="divider"><span>Signup/Login via Google (private beta)</span></div>
       </>
       
       <div className="google-login-container">

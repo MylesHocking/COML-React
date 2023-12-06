@@ -2,10 +2,12 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
+import { useUserContext } from '../App.js';
 
 const LinkedInCallbackHandler = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { refreshFromLocalStorage } = useUserContext();
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -18,9 +20,9 @@ const LinkedInCallbackHandler = () => {
     
     localStorage.setItem("user_id", user_id);
     localStorage.setItem("userInfo", JSON.stringify(user_info));
-    // Navigate to user's chart page
+    refreshFromLocalStorage();
     navigate('/chart/' + user_id);
-  }, [navigate, location.search]);
+  }, [navigate, location.search, refreshFromLocalStorage]);
 
   return <div>Loading...</div>;
 };
