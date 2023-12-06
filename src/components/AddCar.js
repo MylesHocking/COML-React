@@ -29,9 +29,10 @@ const AddCar = ({ cars }) => {
     
     const [imageURL, setImageURL] = useState(null); //single image
     const [imageURLs, setImageURLs] = useState([]); //for gallery
+    {/*}
     const handleWikiImageSelect = (imageUrl) => {
       setImageURL(imageUrl); // Use the existing state for the selected image
-    };
+    };*/}
     const [selectedFile, setSelectedFile] = useState(null); // New state for selected file
     const handleFileChange = (e) => {
       const file = e.target.files[0];
