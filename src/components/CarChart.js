@@ -15,6 +15,7 @@ const CarChart = ({ cars, userId }) => {
   useEffect(() => {
     // Use the userId from URL if available, otherwise default to the prop userId
     const idToUse = urlUserId || userId;
+    console.log("idToUse", idToUse);
     fetchCarsForUser(idToUse);
     return () => {
       setCars([]); // Clear cars

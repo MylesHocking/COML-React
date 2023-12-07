@@ -8,8 +8,8 @@ const ImageSelectionModal = ({ isOpen, onSelect, onRequestClose, make, model, tr
   //const pageTitle = "Audi A7";
   //const apiUrl = `https://commons.wikimedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(searchQuery)}&format=json&origin=*`;
   //const pageTitle2 = "Audi_A4"; // Replace this with the actual title from your first API call
-  const imageUrlApi = `https://commons.wikimedia.org/w/api.php?action=query&titles=${encodeURIComponent(pageTitle)}&prop=images&format=json&origin=*`;
-  
+  //const imageUrlApi = `https://commons.wikimedia.org/w/api.php?action=query&titles=${encodeURIComponent(pageTitle)}&prop=images&format=json&origin=*`;
+  const imageUrlApi = `https://commons.wikimedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(pageTitle)}&format=json&origin=*`;
   //console.log('apiUrl', apiUrl);
   console.log('imageUrlApi', imageUrlApi);
   const handleImageSelect = (imageUrl) => {

@@ -31,7 +31,7 @@ function App() {
   const [userInfo, setUserInfo] = useState(null);
   const [userId, setUserId] = useState(null);
   const [cars, setCars] = useState([]);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); 
+  const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('userInfo'));
   const [showShareForm, setShowShareForm] = useState(false);
   const [isNavExpanded, setIsNavExpanded] = useState(false);
 
@@ -132,7 +132,7 @@ function App() {
     refreshFromLocalStorage
   };
 
-  //console.log("Current userInfo state:", userInfo);
+  console.log("Current userInfo state:", userValue.userInfo , "Current isLoggedIn state:", userValue.isLoggedIn);
 
   return (
         

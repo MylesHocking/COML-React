@@ -91,6 +91,18 @@ const UserProfile = () => {
                         <option value="Private">Private</option>
                     </select>
                 </div>
+                <div>
+                    <label>Email Notifications:&nbsp;</label>
+                    <select
+                        className='input-field'
+                        name="emailNotifications"
+                        value={userInfo.emailNotifications}
+                        onChange={handleChange}
+                    >
+                        <option value="true">Yes</option>
+                        <option value="false">No</option>
+                    </select>
+                </div>
                 <button className='button' type="submit">Save Changes</button>
             </form>
         </div>
