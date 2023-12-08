@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './CarImageModal.css';
 
 const CarImageModal = () => {
-    const [isOpen, setIsOpen] = useState(false);
+    //const [isOpen, setIsOpen] = useState(false);
     const [carMake, setCarMake] = useState('');
     const [carModel, setCarModel] = useState('');
     const [images, setImages] = useState([]);
