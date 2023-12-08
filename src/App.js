@@ -6,6 +6,7 @@ import LandingPage from './components/LandingPage';
 import ShareForm from './components/ShareForm';
 import './App.css';
 import PrivateRoute from './PrivateRoute'; 
+import CarImageModal from './components/CarImageModal.js';
 
 
 const AddCar = lazy(() => import('./components/AddCar'));
@@ -89,7 +90,6 @@ function App() {
     }
   };
 
-  // Modify your existing useEffect to use the new function
   useEffect(() => {
     //console.log('useEffect running', userId, userInfo);
 
@@ -188,6 +188,7 @@ function App() {
                     <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                     <Route path="/terms-of-service" element={<TermsOfService />} />
                     <Route path="/signup" element={<Signup />} />
+                    <Route path="/CarImageModal" element={<CarImageModal />} />
                     {/* Protected Routes */}
                     <Route path="/chart/:userId" element={
                       <PrivateRoute isLoggedIn={isLoggedIn}>

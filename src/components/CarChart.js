@@ -4,6 +4,7 @@ import '../index.css';
 import axios from 'axios';
 import { CarContext } from '../App.js';
 import './CarChart.css';
+import Comments from './Comments.js';
 import { fetchHighResImage } from '../utils/display_utils.js';
 
 const CarChart = ({ cars, userId }) => {   
@@ -334,6 +335,13 @@ const CarChart = ({ cars, userId }) => {
                   ) : (
                     <p>Memories: {selectedCar.memories}</p>
                   )}
+                  {selectedCar && (
+                      <Comments
+                          apiUrl={process.env.REACT_APP_FLASK_API_URL} 
+                          entityId={selectedCar.id} 
+                          entityType="car"
+                      />
+                  )}
                   <div className="smaller-font">
                     {selectedCar.model_trim && <p>Trim: {selectedCar.model_trim}</p>}                
                     {selectedCar.model_year && <p>Made: {selectedCar.model_year}</p>}
@@ -373,6 +381,9 @@ const CarChart = ({ cars, userId }) => {
                       <button onClick={handleDeleteButtonClick}>Delete</button>
                     </div>
                   )}
+                  {/* Add comments section like in Events.js*/}
+                  
+
                 </div>
               </div>
             </div>
