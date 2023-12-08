@@ -35,11 +35,11 @@ const CarImageModal = () => {
     
 
     // Inside the return statement of CarImageModal
-    //style={{ display: isOpen ? 'block' : 'none' }}
+    //style={{ display: isOpen ? 'block' : 'none' }} onClick={() => setIsOpen(false)}
     return (
         <div className="modal">
             <div className="modal-content">
-                <span className="close" onClick={() => setIsOpen(false)}>&times;</span>
+                <span className="close">&times;</span>
                 <h2>Search Car Images</h2>
                 <input 
                     type="text" 
