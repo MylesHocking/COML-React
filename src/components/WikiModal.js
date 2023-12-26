@@ -31,7 +31,7 @@ const ImageSelectionModal = ({ isOpen, onSelect, onRequestClose, make, model, tr
       .catch(error => {
         console.error('Error fetching images:', error);
       });
-  }, [pageTitle]);
+  }, [pageTitle, imageUrlApi]);
 
   if (!isOpen) {
     return null;

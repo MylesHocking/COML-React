@@ -367,10 +367,10 @@ const AddCar = ({ cars }) => {
     
   <h1>Add Car</h1>
   
-  <a href="#" onClick={(e) => {
+  <button onClick={(e) => {
     e.preventDefault();
     setIsWikiModalOpen(true);
-  }}>Wiki</a>
+  }}>Wiki</button>
   <ImageSelectionModal 
     isOpen={isWikiModalOpen}
     onRequestClose={() => setIsWikiModalOpen(false)}

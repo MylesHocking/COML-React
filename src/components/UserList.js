@@ -22,7 +22,7 @@ function UserList() {
     fetchUsers();
   }, []);
 
-  const handleFriendAction = async (targetUserId, action) => {
+  /*const handleFriendAction = async (targetUserId, action) => {
     try {
       await axios.post(`${apiUrl}/api/friend_action`, { userId: localStorage.getItem("user_id"), targetUserId, action });
       // Update the user list to reflect the new friendship status
@@ -31,7 +31,7 @@ function UserList() {
     } catch (error) {
       console.error(`Error performing friend action (${action}):`, error);
     }
-  };
+  };*/
 
   return (
     <div>

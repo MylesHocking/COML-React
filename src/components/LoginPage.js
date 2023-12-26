@@ -5,7 +5,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useUserContext } from '../App.js';
 import './LoginPage.css';
-import FacebookSignIn from './LoginFacebook.js';
+//import FacebookSignIn from './LoginFacebook.js';
 
 const apiUrl = process.env.REACT_APP_FLASK_API_URL;
 const oauthRedirectUri = process.env.REACT_APP_OAUTH_REDIRECT_URI;
