@@ -5,78 +5,40 @@ const ImageSelectionModal = ({ isOpen, onSelect, onRequestClose, make, model, tr
   const [images, setImages] = useState([]);
   const pageTitle = `${make} ${model} ${trim || ''}`.trim();
   console.log('pageTitle', pageTitle);
-  //const pageTitle = "Audi A7";
-  //const apiUrl = `https://commons.wikimedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(searchQuery)}&format=json&origin=*`;
-  //const pageTitle2 = "Audi_A4"; // Replace this with the actual title from your first API call
-  //const imageUrlApi = `https://commons.wikimedia.org/w/api.php?action=query&titles=${encodeURIComponent(pageTitle)}&prop=images&format=json&origin=*`;
-  const imageUrlApi = `https://commons.wikimedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(pageTitle)}&format=json&origin=*`;
-  //console.log('apiUrl', apiUrl);
+  const thumbnailWidth = 300; // Desired width for thumbnails
+
+  const imageUrlApi = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrnamespace=6&gsrsearch=${encodeURIComponent(pageTitle)}&gsrlimit=10&prop=imageinfo&iiprop=url|thumburl&iiurlwidth=${thumbnailWidth}&format=json&origin=*`;
   console.log('imageUrlApi', imageUrlApi);
+
   const handleImageSelect = (imageUrl) => {
     console.log('Selected image:', imageUrl);
-    onSelect(imageUrl); // Call the function passed from AddCar
-    console.log('onSelect', onSelect);
-    onRequestClose(); // Close the modal
+    onSelect(imageUrl);
+    onRequestClose();
   };
 
   useEffect(() => {
     setImages([]);
-    // First API call to get pageid
-    console.log('useEffect imageUrlApi', imageUrlApi);
     fetch(imageUrlApi)
-        .then(response => response.json())
-        .then(data => {
-            const pageId = Object.keys(data.query.pages)[0]; // This gets the first key (page ID)
-            const pageData = data.query.pages[pageId];
-      
-            if (pageData && pageData.images) {
-              // Further processing to extract image filenames
-              const imageTitles = pageData.images.map(img => img.title);
-              console.log('Image Titles:', imageTitles);
-      
-              return fetchImageUrls(imageTitles);
-            }
-        })
-        .then(imageUrls => {
-            // Filter out null values and set the image URLs in state
-            setImages(imageUrls.filter(url => url != null));
-          })
-        .catch(error => {
-        console.error('Error fetching images:', error);
+      .then(response => response.json())
+      .then(data => {
+        const pages = data.query.pages;
+        const imageUrls = Object.values(pages).map(page => {
+          // Get the thumbnail URL, falling back to the full URL if thumbnail is not available
+          return page.imageinfo[0].thumburl || page.imageinfo[0].url;
         });
-    }, [make, model, trim]);
-
-    const fetchImageUrls = (imageTitles) => {
-        const thumbnailWidth = 300; // Desired thumbnail width
-      
-        return Promise.all(imageTitles.map(title => 
-          fetch(`https://commons.wikimedia.org/w/api.php?action=query&titles=${encodeURIComponent(title)}&prop=imageinfo&iiprop=url|thumburl&iiurlwidth=${thumbnailWidth}&format=json&origin=*`)
-          .then(response => response.json())
-          .then(data => {
-            const page = data.query.pages[Object.keys(data.query.pages)[0]];
-            if (page.imageinfo && page.imageinfo.length > 0) {
-              // Check for thumburl, fallback to full url if not available
-              //console.log('Image URL:', page.imageinfo[0].url);
-              //console.log('Thumbnail URL:', page.imageinfo[0].thumburl);
-              return page.imageinfo[0].thumburl || page.imageinfo[0].url;
-            }
-            return null;
-          })
-          .catch(error => {
-            console.error('Error fetching thumbnail URL for:', title, error);
-            return null;
-          })
-        ));
-      };
-      
-      
+        setImages(imageUrls);
+      })
+      .catch(error => {
+        console.error('Error fetching images:', error);
+      });
+  }, [pageTitle]);
 
   if (!isOpen) {
     return null;
   }
 
   return (
-    <div className="modal" isOpen={isOpen} onRequestClose={onRequestClose} contentLabel="Select a Car Image">
+    <div className="modal" isOpen={isOpen} onRequestClose={onRequestClose} contentlabel="Select a Car Image">
       <div className="modal-content">
         <span className="close-button" onClick={onRequestClose}>&times;</span>
         <div className="image-grid">

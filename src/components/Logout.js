@@ -1,28 +1,15 @@
 import React from 'react';
+import { useUserContext } from '../App.js'; 
+import { performLogout } from '../utils/authUtils'; 
 import { useNavigate } from 'react-router-dom';
-import { useUserContext } from '../App.js';  
 
-function Logout({ setIsLoggedIn, setCars }) {
-  const navigate = useNavigate();
-  const { setUserId, setUserInfo, refreshFromLocalStorage } = useUserContext();  
+function Logout() {
+    const navigate = useNavigate();
+    const { setUserId, setUserInfo, setIsLoggedIn } = useUserContext();
 
-  const handleLogout = () => {
-    // Clear local storage
-    localStorage.removeItem("googleToken");
-    localStorage.removeItem("user_id");
-    localStorage.removeItem("userInfo");
-
-    // Reset state using context methods
-    setUserId(null);
-    setUserInfo(null);
-    setCars([]); 
-    setIsLoggedIn(false);
-    // Refresh state based on the local storage
-    refreshFromLocalStorage();
-
-    // Redirect to login or home page
-    navigate('/');
-  };
+    const handleLogout = () => {
+        performLogout(setUserId, setUserInfo, setIsLoggedIn, navigate);
+    };    
 
   return (
     <div className="logout-container">

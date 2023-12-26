@@ -43,13 +43,13 @@ function UserList() {
               <div className="user-info">
                 <Link to={`/chart/${user.user_id}`} className="user-name">{user.firstname} {user.lastname}</Link>
               </div>
-              {user.sharingPreference === 'Global' && (
+              {
               <Link to={`/chart/${user.user_id}`} className="view-chart-link">View Chart</Link>
-              )}
-              {user.is_friend
+              }
+              {/*user.is_friend
                 ? <button className='button' onClick={() => handleFriendAction(user.user_id, 'unfriend')}>Unfriend</button>
                 : <button className='button' onClick={() => handleFriendAction(user.user_id, 'addFriend')}>Add Friend</button>
-              }
+              */}
             </li>
           ))}
         </ul>

@@ -12,11 +12,9 @@ const CarChart = ({ cars, userId }) => {
   const { fetchCarsForUser } = useContext(CarContext);
   const sessionUserId = localStorage.getItem("user_id");
   const isCurrentUser = urlUserId === sessionUserId;
-
+  const idToUse = urlUserId || userId;
+  console.log("idToUse", idToUse);
   useEffect(() => {
-    // Use the userId from URL if available, otherwise default to the prop userId
-    const idToUse = urlUserId || userId;
-    console.log("idToUse", idToUse);
     fetchCarsForUser(idToUse);
     return () => {
       setCars([]); // Clear cars
@@ -83,53 +81,76 @@ const CarChart = ({ cars, userId }) => {
   const [selectedCar, setSelectedCar] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const [editedMemories, setEditedMemories] = useState('');
+  const [editedRating, setEditedRating] = useState('');
+  const [editedYearPurchased, setEditedYearPurchased] = useState('');
+
 
   const handleEditButtonClick = () => {
     // If we're about to enter edit mode, set the memories
     if (!isEditMode) {
       setEditedMemories(selectedCar.memories);
+      setEditedRating(selectedCar.rating);
+      setEditedYearPurchased(selectedCar.year_purchased);
     }
     setIsEditMode(!isEditMode); // Toggle edit mode
   };
 
-  const updateCarData = (carId, newMemories) => {
+  const updateCarData = (carId, newMemories, newRating, newYearPurchased) => {
     const updatedCars = cars.map(car => 
-      car.id === carId ? { ...car, memories: newMemories } : car
+      car.id === carId ? { ...car, memories: newMemories, rating: newRating, year_purchased: newYearPurchased } : car
     );
     setCars(updatedCars);
-    //set selected car memories to new memories
-    setSelectedCar({...selectedCar, memories: newMemories});
-  };
+    // Update selected car with new details
+    setSelectedCar(prevSelectedCar => ({
+      ...prevSelectedCar, 
+      memories: newMemories, 
+      rating: newRating, 
+      year_purchased: newYearPurchased
+    }));
+};
 
-  const handleEditCar = async (e) => {
-    e.preventDefault();
 
-    let formData = new FormData();
-    formData.append('memories', editedMemories);
-    // Append image file if a new one was chosen
-    // ...
+const handleEditCar = async (e) => {
+  e.preventDefault();
 
-    try {
-      console.log('In handleEditCar', selectedCar.id );
-      const response = await fetch(`${apiUrl}/api/edit_car/${selectedCar.id}`, {
-        method: 'POST',
-        body: formData,
-        // Include headers, credentials, etc., as needed
-      });
-      const result = await response.json();
-      console.log(result);
-      // give result to user via popup
-      alert('Car updated successfully!');
-      updateCarData(selectedCar.id, editedMemories);
+  let formData = new FormData();
+  formData.append('memories', editedMemories);
+  formData.append('rating', editedRating);
+  formData.append('year_purchased', editedYearPurchased);
+  // Append image file if a new one was chosen
+  // ...
 
-      setEditedMemories('');
-      // Close the edit mode
-      setIsEditMode(false);
+  try {
+    console.log('In handleEditCar', selectedCar.id);
+    const response = await fetch(`${apiUrl}/api/edit_car/${selectedCar.id}`, {
+      method: 'POST',
+      body: formData,
+      // Include headers, credentials, etc., as needed
+    });
+    const result = await response.json();
+    console.log(result);
 
-    } catch (error) {
-      console.error('Error updating car:', error);
+    // Check if the update was successful
+    if (response.ok) {
+        alert('Car updated successfully!');
+        // Call updateCarData to update the state with new car data
+        updateCarData(selectedCar.id, editedMemories, editedRating, editedYearPurchased);
+    } else {
+        // Handle any errors returned by the server
+        alert('Failed to update the car. Please try again.');
     }
-  };
+
+    setEditedMemories('');
+    setEditedRating('');
+    setEditedYearPurchased('');
+    // Close the edit mode
+    setIsEditMode(false);
+
+  } catch (error) {
+    console.error('Error updating car:', error);
+    alert('An error occurred while updating the car.');
+  }
+};
 
   const handleImageChange = (e) => {
     // Logic to handle image file selection
@@ -289,15 +310,17 @@ const CarChart = ({ cars, userId }) => {
                         width="150" height="150"
                         style={{ animationDuration: '1s', animationDelay: `${animationDelay}s` }}
                       >
-                        <div className="car-label">
-                          <span className="make">{car?.make}</span><br />
-                          <span className="model">{car?.model}</span>
-                        </div>
                         <div 
-                          onClick={() => handlePointClick(car, point.imageUrl)}
-                          className={`point ${!point.imageUrl ? 'grey-placeholder' : ''}`}
+                            className={`car-label-container ${!point.imageUrl ? 'grey-placeholder' : ''}`}
+                            onClick={() => handlePointClick(car, point.imageUrl)}
                         >
-                          {point.imageUrl ? <img src={point.imageUrl} alt="car" /> : null}
+                            <div className="car-label">
+                                <span className="make">{car?.make}</span><br />
+                                <span className="model">{car?.model}</span>
+                            </div>
+                            <div className="point">
+                                {point.imageUrl ? <img src={point.imageUrl} alt="car" /> : null}
+                            </div>
                         </div>
                       </foreignObject>
                     </React.Fragment>
@@ -327,13 +350,44 @@ const CarChart = ({ cars, userId }) => {
                   
                   {isEditMode ? (
                     // Edit form for updating memories and image
-                    <form onSubmit={handleEditCar}>
+                    <form id="editCarForm" onSubmit={handleEditCar}>
                       <textarea value={editedMemories} onChange={(e) => setEditedMemories(e.target.value)} />
+                      <select 
+                        value={editedRating} 
+                        onChange={(e) => setEditedRating(e.target.value)}
+                      >
+                        <option value="">Select a rating</option>
+                        {Array.from({ length: 10 }, (_, i) => (
+                          <option key={i + 1} value={i + 1}>
+                            {i + 1}
+                          </option>
+                        ))}
+                      </select>
+                      <label>
+                        Year Purchased&nbsp;
+                        <select
+                          name="year_purchased"
+                          value={editedYearPurchased}
+                          onChange={(e) => setEditedYearPurchased(e.target.value)}
+                        >
+                          <option value="" disabled>Select Year</option>
+                          {Array.from({ length: new Date().getFullYear() - 1944 }, (_, i) => 1945 + i)
+                            .map((year, index) => (
+                              <option key={index} value={year}>{year}</option>
+                            ))
+                          }
+                        </select>
+                      </label>
+
                       <input type="file" onChange={handleImageChange} />
                       <button type="submit">Save Changes</button>
                     </form>
                   ) : (
-                    <p>Memories: {selectedCar.memories}</p>
+                    <div>
+                      <p>Memories: {selectedCar.memories}</p>
+                      <p>Rating: {selectedCar.rating}</p>
+                      <p>Year Purchased: {selectedCar.year_purchased}</p>
+                    </div>
                   )}
                   {selectedCar && (
                       <Comments
@@ -389,6 +443,15 @@ const CarChart = ({ cars, userId }) => {
             </div>
           )}
       </div> 
+      
+      <div className="chart-comments">
+        <h4>Comments</h4>
+        <Comments
+            apiUrl={process.env.REACT_APP_FLASK_API_URL}
+            entityId={idToUse} // The same userId used for fetching the cars
+            entityType="userCarHistory"
+        />
+      </div>
     </>
   );
 };

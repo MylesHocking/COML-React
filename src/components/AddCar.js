@@ -4,11 +4,11 @@ import axios from 'axios';
 import { CarContext } from '../App.js';
 import CarCarousel from './CarCarousel';
 import SuccessModal from './SuccessModal';
-//import WikiModal from './WikiModal';
+import ImageSelectionModal from './WikiModal';
 
 
 const AddCar = ({ cars }) => {
-    //const [isWikiModalOpen, setIsWikiModalOpen] = useState(false);
+    const [isWikiModalOpen, setIsWikiModalOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalMessage, setModalMessage] = useState('');
     const { fetchCarsForUser } = useContext(CarContext);
@@ -29,10 +29,10 @@ const AddCar = ({ cars }) => {
     
     const [imageURL, setImageURL] = useState(null); //single image
     const [imageURLs, setImageURLs] = useState([]); //for gallery
-    /*}
+    
     const handleWikiImageSelect = (imageUrl) => {
       setImageURL(imageUrl); // Use the existing state for the selected image
-    };*/
+    };
     const [selectedFile, setSelectedFile] = useState(null); // New state for selected file
     const handleFileChange = (e) => {
       const file = e.target.files[0];
@@ -366,19 +366,19 @@ const AddCar = ({ cars }) => {
   <div className={"add-car-container"}>
     
   <h1>Add Car</h1>
-  {/*}
+  
   <a href="#" onClick={(e) => {
     e.preventDefault();
     setIsWikiModalOpen(true);
   }}>Wiki</a>
-  <WikiModal 
+  <ImageSelectionModal 
     isOpen={isWikiModalOpen}
     onRequestClose={() => setIsWikiModalOpen(false)}
     onSelect={handleWikiImageSelect}
     make={formData.make}
     model={formData.model}
     trim={formData.variant ? JSON.parse(formData.variant).trim : undefined}
-    />*/}
+  />
     
   <form onSubmit={handleSubmit} className="car-form">
     {showCustomCarFields ? (

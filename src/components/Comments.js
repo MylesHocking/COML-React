@@ -6,8 +6,16 @@ const Comments = ({ apiUrl, entityId, entityType }) => {
     const [newComment, setNewComment] = useState('');
     useEffect(() => {
         const fetchComments = async () => {
+            console.log('Comments apiUrl', apiUrl);
             try {
-                const params = entityType === "event" ? { event_id: entityId } : { user_car_association_id: entityId };
+                let params = {};
+                if (entityType === "event") {
+                    params = { event_id: entityId };
+                } else if (entityType === "car") {
+                    params = { user_car_association_id: entityId };
+                } else {
+                    params = { car_chart_user_id : entityId };
+                }
                 console.log('Comments apiUrl', apiUrl , 'params' , params);
                 const response = await axios.get(`${apiUrl}/api/get_comments`, { params });
                 console.log('Comments response', response);
@@ -26,13 +34,15 @@ const Comments = ({ apiUrl, entityId, entityType }) => {
             user_id: localStorage.getItem("user_id"), 
             text: newComment
         };
-    
         // Add the appropriate ID based on entityType
         if (entityType === "event") {
             commentData.event_id = entityId;
         } else if (entityType === "car") {
             commentData.user_car_association_id = entityId;
+        } else {
+            commentData.car_chart_user_id = entityId;
         }
+        console.log('commentData', commentData);
     
         try {
             const response = await axios.post(`${apiUrl}/api/add_comment`, commentData);
@@ -59,8 +69,8 @@ const Comments = ({ apiUrl, entityId, entityType }) => {
 
     return (
         <div>
-            {Array.isArray(comments) && comments.map(comment => (
-                <div key={comment.id} className="comment">
+            {Array.isArray(comments) && comments.map((comment, index) => (
+                <div key={comment.id} id={`comment-${comment.id}`} className="comment">
                     <p><strong>
                         <a href={`/chart/${comment.user_id}`}>
                             {comment.firstname} {comment.lastname}
@@ -69,12 +79,13 @@ const Comments = ({ apiUrl, entityId, entityType }) => {
                     </p>
                 </div>
             ))}
-            <form onSubmit={handleCommentSubmit}>
+            <form id="addCommentForm" onSubmit={handleCommentSubmit}>
                 <input 
                     type="text" 
                     value={newComment} 
                     onChange={(e) => setNewComment(e.target.value)} 
-                    placeholder="Add a comment"
+                    placeholder="Add a comment"                    
+                    id={`add-comment-${entityType}`} // for test
                 />
                 <button type="submit">Post</button>
             </form>

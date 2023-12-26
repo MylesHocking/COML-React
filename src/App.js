@@ -20,6 +20,8 @@ const UserList = lazy(() => import('./components/UserList'));
 const EventFeed = lazy(() => import('./components/Events'));
 const UserProfile = lazy(() => import('./components/UserProfile'));
 const LinkedInCallbackHandler = lazy(() => import('./components/LinkedInCallbackHandler'));
+const Farewell = lazy(() => import('./components/Farewell'));
+const DataDeletion = lazy(() => import('./components/DataDeletion'));
 
 export const UserContext = createContext();
 export function useUserContext() {
@@ -189,6 +191,8 @@ function App() {
                     <Route path="/terms-of-service" element={<TermsOfService />} />
                     <Route path="/signup" element={<Signup />} />
                     <Route path="/CarImageModal" element={<CarImageModal />} />
+                    <Route path='Farewell' element={<Farewell />} />
+                    <Route path='DataDeletion' element={<DataDeletion />} />
                     {/* Protected Routes */}
                     <Route path="/chart/:userId" element={
                       <PrivateRoute isLoggedIn={isLoggedIn}>
@@ -220,7 +224,7 @@ function App() {
                   </Routes>
                 </Suspense>
                 <footer className="footer">
-                  <Link to="/privacy-policy">Privacy Policy</Link> <Link to="/terms-of-service">Terms of Service</Link>
+                  <Link to="/privacy-policy">Privacy Policy</Link> <Link to="/terms-of-service">Terms of Service</Link> <Link to="/DataDeletion">Data Deletion</Link>
                 </footer>
                 <ShareForm
                   isOpen={showShareForm}

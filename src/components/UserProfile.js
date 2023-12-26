@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const apiUrl = process.env.REACT_APP_FLASK_API_URL;
 
@@ -49,6 +50,24 @@ const UserProfile = () => {
         } catch (err) {
             setError(err.message);
             setLoading(false);
+        }
+    };
+
+    
+    const navigate = useNavigate();
+    // Add a function to handle account deletion
+    const handleDeleteAccount = () => {
+        const confirmDelete = window.confirm("Are you sure you want to delete all your data? This action cannot be undone.");
+        if (confirmDelete) {
+            // Assuming the user's ID is stored in localStorage
+            const userId = localStorage.getItem("user_id");
+            axios.delete(`${apiUrl}/api/delete_user/${userId}`)
+                .then(response => {
+                    console.log(response.data);
+                    // navigate to the farewell page
+                    navigate('/farewell');
+                })
+                .catch(error => console.error('Error deleting user:', error));
         }
     };
 
@@ -105,6 +124,13 @@ const UserProfile = () => {
                 </div>
                 <button className='button' type="submit">Save Changes</button>
             </form>
+
+            {/* Separate section for account deletion */}
+            <div className="account-deletion-section">
+                <h3>Delete Account</h3>
+                <p>This action cannot be undone. Please be certain.</p>
+                <button className='button' onClick={handleDeleteAccount}>Delete My Account</button>
+            </div>
         </div>
     );
 };

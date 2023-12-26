@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useUserContext } from '../App.js';
 import './LoginPage.css';
+import FacebookSignIn from './LoginFacebook.js';
 
 const apiUrl = process.env.REACT_APP_FLASK_API_URL;
 const oauthRedirectUri = process.env.REACT_APP_OAUTH_REDIRECT_URI;
@@ -68,12 +69,6 @@ function App() {
       const { user_info } = response.data;
       console.log("User info:", user_info);
       handleLoginSuccess(user_info);
-      // Save user_info in the local state or local storage
-      //localStorage.setItem("user_id", user_info.id);  // <-- Store user ID here
-      //localStorage.setItem("userInfo", JSON.stringify(user_info));
-      //refreshFromLocalStorage();
-      // push to user's chart page
-      //navigate('/chart/' + user_info.id);
     } catch (error) {
       console.error('Server error:', error);
     
@@ -103,19 +98,24 @@ function App() {
       <>
         <div className="divider"><span>Signup/Login with LinkedIn</span></div>
           <LinkedInAuth /> {/* Use LinkedInAuth component here */}
+        {/*<div className="divider"><span>Signup/Login with Facebook</span></div>
+          <FacebookSignIn onFacebookLogin={handleLoginSuccess} /> {/* Use FacebookSignIn component here */}
+        
         <div className="divider"><span>Signup/Login via email</span></div>
           <form onSubmit={handleLoginSubmit}>
             <input 
+              name='email'
               className="input-field" 
               type="text" 
-              placeholder="Email" 
+              placeholder="email" 
               value={email} 
               onChange={(e) => setEmail(e.target.value)} 
             />
             <input 
+              name='password'
               className="input-field" 
               type="password" 
-              placeholder="Password" 
+              placeholder="password" 
               value={password} 
               onChange={(e) => setPassword(e.target.value)} 
             />
