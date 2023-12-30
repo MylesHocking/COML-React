@@ -15,4 +15,9 @@
       grid-template-columns: 1fr;
     }
   }
+
+  /* make the zindex of the modal higher than the navbar */
+  .modal {
+    z-index: 3;
+  }
   

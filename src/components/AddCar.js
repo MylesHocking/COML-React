@@ -6,6 +6,13 @@ import CarCarousel from './CarCarousel';
 import SuccessModal from './SuccessModal';
 import ImageSelectionModal from './WikiModal';
 
+const safeJSONParse = (str) => {
+  try {
+    return JSON.parse(str);
+  } catch (e) {
+    return undefined;
+  }
+};
 
 const AddCar = ({ cars }) => {
     const [isWikiModalOpen, setIsWikiModalOpen] = useState(false);
@@ -29,10 +36,17 @@ const AddCar = ({ cars }) => {
     
     const [imageURL, setImageURL] = useState(null); //single image
     const [imageURLs, setImageURLs] = useState([]); //for gallery
+    const [thumbnailURL, setThumbnailURL] = useState(null); // For the thumbnail
+    const [imageAttribution, setImageAttribution] = useState(null); // For the attribution
+
     
-    const handleWikiImageSelect = (imageUrl) => {
-      setImageURL(imageUrl); // Use the existing state for the selected image
+    
+    const handleWikiImageSelect = (imageData) => {
+      setImageURL(imageData.url); // Main image URL
+      setThumbnailURL(imageData.thumbnailUrl); // Thumbnail URL
+      setImageAttribution(imageData.attribution); // Attribution
     };
+  
     const [selectedFile, setSelectedFile] = useState(null); // New state for selected file
     const handleFileChange = (e) => {
       const file = e.target.files[0];
@@ -254,7 +268,8 @@ const AddCar = ({ cars }) => {
       setImageURLs([]);  // Clear all image URLs in the gallery
     }
     // If the year & trim dropdown is selected, fetch the first image
-    if (name === 'variant') {
+    if (name === 'variant' && value !== "custom-option") {
+      try {
         const variantData = JSON.parse(value);
         const { model_id, is_generic_model } = variantData;
         
@@ -262,7 +277,10 @@ const AddCar = ({ cars }) => {
         if (model_id) {          
             await fetchFirstImage(model_id);
         }
-    }   
+      } catch (error) {
+        console.error('Error parsing variant data:', error);
+      }
+    }
 
   };
 
@@ -294,8 +312,10 @@ const AddCar = ({ cars }) => {
     };
 
     if (formData.variant) {
-      const variantData = JSON.parse(formData.variant);
-      payload = { ...payload, model_id: variantData.model_id };
+      const variantData = safeJSONParse(formData.variant);
+      if (variantData) {
+          payload = { ...payload, model_id: variantData.model_id };
+      }
     }
 
     // Append all the existing form data to FormData object
@@ -308,7 +328,16 @@ const AddCar = ({ cars }) => {
     if (selectedFile) {
       formDataObj.append('file', selectedFile, selectedFile.name);
     }
-  
+    // Append the Wikimedia image URL to formDataObj
+    if (imageURL) {
+      formDataObj.append('wiki_image_url', imageURL);
+    }
+    if (thumbnailURL) {
+      formDataObj.append('wiki_image_thumbnail_url', thumbnailURL);
+    }
+    if (imageAttribution) {
+      formDataObj.append('wiki_image_attribution', imageAttribution);
+    }
     try {
       console.log("Submitting form data:", formDataObj);
       for (var pair of formDataObj.entries()) {
@@ -325,24 +354,30 @@ const AddCar = ({ cars }) => {
         // Update the cars in the context
         fetchCarsForUser();
   
-        let successMessage = '';
+        let successText = '';
         if (formData.custom_make && formData.custom_model) {
-          successMessage = `${formData.custom_make} ${formData.custom_model}`;
+            successText = `${formData.custom_make} ${formData.custom_model}`;
         } else {
-          successMessage = `${formData.make} ${formData.model}`;
-        }
-        // give option to add another car or navigate to the chart      
-        successMessage += ` ${response.data.message}, please add the next one or go to your chart to see your cars!`;
-        // Append the suggestion if it exists in the response
-        if (response.data.suggestion) {
-          successMessage += `\nSuggestion: ${response.data.suggestion}`;
+            successText = `${formData.make} ${formData.model}`;
         }
 
-        // Set the complete message and open the modal
+        // Construct the chart URL
+        const chartUrl = `/chart/${user_id}`;
+
+        // Construct the success message as JSX
+        const successMessage = (
+            <>
+                <p>{successText} {response.data.message}. Please add the next one or go to <a href={chartUrl}>your chart</a> to see your cars!</p>
+                {response.data.suggestion && <p>Suggestion: {response.data.suggestion}</p>}
+            </>
+        );
+
+        // Set the complete JSX message and open the modal
         setModalMessage(successMessage);
         setIsModalOpen(true);
         console.log("Modal Message:", modalMessage, "Is Modal Open:", isModalOpen);
-
+        
+        setShowCustomCarFields(false);
         setFormData({
             make: '',
             model: '',
@@ -350,6 +385,9 @@ const AddCar = ({ cars }) => {
             variant: '',
             rating: '',
             memories: '',
+            custom_make: '',
+            custom_model: '',
+            custom_variant: '',
         });
       }
     } catch (error) {
@@ -367,18 +405,7 @@ const AddCar = ({ cars }) => {
     
   <h1>Add Car</h1>
   
-  <button onClick={(e) => {
-    e.preventDefault();
-    setIsWikiModalOpen(true);
-  }}>Wiki</button>
-  <ImageSelectionModal 
-    isOpen={isWikiModalOpen}
-    onRequestClose={() => setIsWikiModalOpen(false)}
-    onSelect={handleWikiImageSelect}
-    make={formData.make}
-    model={formData.model}
-    trim={formData.variant ? JSON.parse(formData.variant).trim : undefined}
-  />
+  
     
   <form onSubmit={handleSubmit} className="car-form">
     {showCustomCarFields ? (
@@ -513,7 +540,8 @@ const AddCar = ({ cars }) => {
               <>
                 <h4>{
                   (() => {
-                    const { year, trim } = formData.variant ? JSON.parse(formData.variant) : {};
+                    const variantData = safeJSONParse(formData.variant);
+                    const { year, trim } = variantData || {};
                     return `${year || ''} ${trim || 'Selected Model'}`.trim();
                   })()
                 }</h4>
@@ -524,9 +552,28 @@ const AddCar = ({ cars }) => {
         </div>
       )}
 
+
       {/* Custom Photo Upload */}
       {showCustomPhotoUpload && (
         <>
+          <div className="row">
+            <div className="col-full">
+              <h5>Or select from Wikimedia Commons</h5>
+              <button onClick={(e) => {
+                e.preventDefault();
+                setIsWikiModalOpen(true);
+              }}>Select a wiki image</button>
+              <ImageSelectionModal 
+                isOpen={isWikiModalOpen}
+                onRequestClose={() => setIsWikiModalOpen(false)}
+                onSelect={handleWikiImageSelect}
+                make={formData.make}
+                model={formData.model}
+                trim={safeJSONParse(formData.variant)?.trim}
+              />
+            </div>
+          </div>
+
           <div className="row">
             <div className="col-full">
               
@@ -596,9 +643,11 @@ const AddCar = ({ cars }) => {
     </form>
     <SuccessModal
         isOpen={isModalOpen}
-        message={modalMessage}
         onClose={() => setIsModalOpen(false)}
-    />
+    >
+        {modalMessage}
+    </SuccessModal>
+
      
     </div>
   );

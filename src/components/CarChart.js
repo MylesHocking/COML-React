@@ -194,6 +194,7 @@ const handleEditCar = async (e) => {
     console.log("Clicked on:", car);  
     // Fetch the high-res image
     const imageUrl = await fetchHighResImage(car, apiUrl);
+    console.log("imageUrl:", imageUrl);
     setSelectedCar({...car, imageUrl});
   };
 
@@ -240,6 +241,9 @@ const handleEditCar = async (e) => {
             let apiEndpoint;
             if (car.has_custom_image) {
               apiEndpoint = `${apiUrl}/api/get_custom_thumb/${car.user_car_association_id}`;
+            } else if (car.has_wiki_image) {
+              // Construct a URL to fetch the thumbnail directly from Wikimedia
+              imageUrl = car.wiki_thumbnail_url;  
             } else {
               apiEndpoint = `${apiUrl}/api/get_first_thumb/${car.model_id}`;
             }
@@ -345,7 +349,7 @@ const handleEditCar = async (e) => {
               <div className="modal">
                 <div className="modal-content">          
                   <span className="close" onClick={() => setSelectedCar(null)}>&times;</span>
-                  <h1>{selectedCar.make} {selectedCar.model}</h1>
+                  <h1>{selectedCar.make} {selectedCar.model} {selectedCar.model_trim} {selectedCar.model_year}</h1>
                   {selectedCar.imageUrl ? <img src={selectedCar.imageUrl} alt={`${selectedCar.make} ${selectedCar.model}`} /> : <p>No image available</p>}
                   
                   {isEditMode ? (
