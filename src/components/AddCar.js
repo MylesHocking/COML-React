@@ -126,27 +126,7 @@ const AddCar = ({ cars }) => {
         loadMoreImages();
       }
     };    
-
-    useEffect(() => {
-      const fetchImageForVariant = async () => {
-        if (formData.variant && formData.variant !== "custom-option") {
-          try {
-            const variantData = JSON.parse(formData.variant);
-            const { model_id, is_generic_model } = variantData;
     
-            console.log("Variant Data:", variantData, "Model ID:", model_id, "Is Generic Model:", is_generic_model);  
-            if (model_id) {
-              await fetchFirstImage(model_id);
-            }
-          } catch (error) {
-            console.error('Error parsing variant data:', error);
-          }
-        }
-      };
-    
-      fetchImageForVariant();
-    }, [formData.variant]); // Only re-run the effect if formData.variant changes    
-
     const onSelectThumbnail = (selectedThumbnail) => {
         const { modelId } = selectedThumbnail;
         const selectedVariant = modelVariants.find(variant => variant.model_id === modelId);
@@ -175,29 +155,49 @@ const AddCar = ({ cars }) => {
         }
       };
     
-    const fetchFirstImage = async (modelId, isMultiple = false) => {
-        console.log("Fetching first image for model:", modelId);     
-        try {
-            let apiEndpoint = isMultiple
-            ? `${apiUrl}/api/get_first_thumb/${modelId}`
-            : `${apiUrl}/api/get_first_photo/${modelId}`;
-        
-            console.log(`API URL for fetching first image:  ${apiEndpoint}`);
+    const fetchFirstImage = useCallback(async (modelId, isMultiple = false) => {
+      console.log("Fetching first image for model:", modelId);     
+      try {
+          let apiEndpoint = isMultiple
+          ? `${apiUrl}/api/get_first_thumb/${modelId}`
+          : `${apiUrl}/api/get_first_photo/${modelId}`;
+      
+          console.log(`API URL for fetching first image:  ${apiEndpoint}`);
+  
+          const response = await axios.get(apiEndpoint);          
+          const imageUrl = response.data.image_url;          
+            
+          if (isMultiple) {
+              // Instead of setting the state here, just return the URL
+              return { imageUrl, modelId };
+          } else {
+              setImageURL(imageUrl);
+              console.log("Set Single Image URL:", imageUrl);
+          }
+      } catch (error) {
+          console.error('Error fetching first image:', error);
+      }
+    });
+    useEffect(() => {
+      const fetchImageForVariant = async () => {
+        if (formData.variant && formData.variant !== "custom-option") {
+          try {
+            const variantData = JSON.parse(formData.variant);
+            const { model_id, is_generic_model } = variantData;
     
-            const response = await axios.get(apiEndpoint);          
-            const imageUrl = response.data.image_url;          
-              
-            if (isMultiple) {
-                // Instead of setting the state here, just return the URL
-                return { imageUrl, modelId };
-            } else {
-                setImageURL(imageUrl);
-                console.log("Set Image URL:", imageUrl);
+            console.log("Variant Data:", variantData, "Model ID:", model_id, "Is Generic Model:", is_generic_model);  
+            if (model_id) {
+              await fetchFirstImage(model_id);
             }
-        } catch (error) {
-            console.error('Error fetching first image:', error);
+          } catch (error) {
+            console.error('Error parsing variant data:', error);
+          }
         }
-    };
+      };
+    
+      fetchImageForVariant();
+    }, [formData.variant, fetchFirstImage]); // Only re-run the effect if formData.variant changes    
+
   
     
     const years = Array.from({ length: new Date().getFullYear() - 1944 }, (_, i) => 1945 + i);
@@ -611,7 +611,7 @@ const AddCar = ({ cars }) => {
           </div>
         )}
         {/* Custom Photo Upload */}
-        {(formData.make && formData.model) || (formData.custom_make && formData.custom_model) && (
+        {((formData.make && formData.model) || (formData.custom_make && formData.custom_model)) && (
           <div className="preview-row">
             <div className="preview-col">
                   {/* Custom Photo Upload */}
