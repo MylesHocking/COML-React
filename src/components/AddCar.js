@@ -177,7 +177,8 @@ const AddCar = ({ cars }) => {
       } catch (error) {
           console.error('Error fetching first image:', error);
       }
-    });
+    }, []);
+
     useEffect(() => {
       const fetchImageForVariant = async () => {
         if (formData.variant && formData.variant !== "custom-option") {
