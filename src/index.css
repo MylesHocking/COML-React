@@ -530,6 +530,54 @@ footer {
   letter-spacing: 0.3em;
 }
 
+/* Additional styles for select elements */
+.select-field {
+  -webkit-appearance: none; /* For Safari */
+  -moz-appearance: none; /* For Firefox */
+  appearance: none; /* Remove default system appearance */
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" viewBox="0 0 24 24" class="chevron-icon"><path d="M18 10.4141L16.586 9.00009L12 13.5861L7.414 9.00009L6 10.4141L11.293 15.7071C11.474 15.8881 11.724 16.0001 12 16.0001C12.276 16.0001 12.526 15.8881 12.707 15.7071L18 10.4141Z" fill="rgb(0, 152, 235)"></path></svg>');
+  background-repeat: no-repeat;
+  background-position: right 8px center; /* Align the icon on the right */
+  background-size: 24px; /* Size of the icon */
+  padding-right: 32px; /* Make room for the icon */
+  cursor: pointer; /* Change cursor to pointer to indicate this is a dropdown */
+  transition: background-color 0.25s ease-in-out; /* Transition effect for background color */
+}
+
+/* Styles to apply on select field focus and hover */
+.select-field:focus,
+.select-field:hover {
+  border-color: #a3a3a3; /* Darker border color on focus/hover */  
+  background-color: #e6f4ff; /* Light blue background on focus/hover */
+}
+
+/* To ensure the select elements have a pointer cursor */
+.select-field:-ms-expand {
+  display: none; /* For IE11 to remove default arrow */
+}
+
+/* Add the chevron using a pseudo-element */
+.select-field::after {
+  content: '';
+  display: block;
+  width: 24px;
+  height: 24px;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" viewBox="0 0 24 24"><path d="M18 10.4141L16.586 9.00009L12 13.5861L7.414 9.00009L6 10.4141L11.293 15.7071C11.474 15.8881 11.724 16.0001 12 16.0001C12.276 16.0001 12.526 15.8881 12.707 15.7071L18 10.4141Z" fill="rgb(235, 152, 235)"></path></svg>');
+  filter: brightness(0) saturate(100%) invert(38%) sepia(77%) saturate(1351%) hue-rotate(204deg) brightness(92%) contrast(89%);
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none; /* Ignore mouse events */
+  transition: all 0.25s ease-in-out; /* Transition effect for the chevron */
+}
+
+/* Change chevron color on select field hover */
+.select-field:hover::after {
+  filter: brightness(0) saturate(100%) invert(14%) sepia(26%) saturate(4484%) hue-rotate(211deg) brightness(89%) contrast(89%);
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="24" width="24" viewBox="0 0 24 24"><path d="M18 10.4141L16.586 9.00009L12 13.5861L7.414 9.00009L6 10.4141L11.293 15.7071C11.474 15.8881 11.724 16.0001 12 16.0001C12.276 16.0001 12.526 15.8881 12.707 15.7071L18 10.4141Z" fill="rgb(235, 152, 235)"></path></svg>'); /* New chevron color on hover */
+}
+
 .textarea {
   width: 80%; 
   min-height: 40px; /* Enough height for two lines, adjust as needed */

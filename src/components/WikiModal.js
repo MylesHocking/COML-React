@@ -3,11 +3,16 @@ import './WikiModal.css';
 
 const ImageSelectionModal = ({ isOpen, onSelect, onRequestClose, make, model, trim }) => {
   const [images, setImages] = useState([]);
-  const pageTitle = `${make} ${model} ${trim || ''}`.trim();
+  const [includeVariant, setIncludeVariant] = useState(true);
+  const [selectedColor, setSelectedColor] = useState('');
   const thumbnailWidth = 300; // Desired width for thumbnails
 
-  const imageUrlApi = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrnamespace=6&gsrsearch=${encodeURIComponent(pageTitle)}&gsrlimit=15&prop=imageinfo&iiprop=url|thumburl&iiurlwidth=${thumbnailWidth}&format=json&origin=*`;
-
+  const handleColorChange = (e) => {
+    setSelectedColor(e.target.value);
+  };
+  const handleIncludeVariantToggle = (e) => {
+    setIncludeVariant(e.target.checked);
+  };
   const handleImageSelect = (image) => {
     const imageInfo = {
       url: image.url, // Full image URL
@@ -21,6 +26,11 @@ const ImageSelectionModal = ({ isOpen, onSelect, onRequestClose, make, model, tr
 
   useEffect(() => {
     setImages([]);
+    const colorQuery = selectedColor ? ` ${selectedColor}` : '';
+    const variantPart = includeVariant && trim ? ` ${trim}` : '';
+    const searchQuery = `${make} ${model}${variantPart}${colorQuery}`.trim();
+    const imageUrlApi = `https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrnamespace=6&gsrsearch=${encodeURIComponent(searchQuery)}&gsrlimit=15&prop=imageinfo&iiprop=url|thumburl&iiurlwidth=${thumbnailWidth}&format=json&origin=*`;
+
     fetch(imageUrlApi)
       .then(response => response.json())
       .then(data => {
@@ -39,7 +49,10 @@ const ImageSelectionModal = ({ isOpen, onSelect, onRequestClose, make, model, tr
       .catch(error => {
         console.error('Error fetching images:', error);
       });
-  }, [pageTitle, imageUrlApi]);
+  }, [make, model, trim, selectedColor, includeVariant]); // Dependencies for useEffect
+
+  // Construct the display label for the search
+  const searchLabel = `${make} ${model}${includeVariant && trim ? ` ${trim}` : ''}${selectedColor ? ` - ${selectedColor}` : ''}`.trim();
 
   if (!isOpen) {
     return null;
@@ -51,6 +64,32 @@ const ImageSelectionModal = ({ isOpen, onSelect, onRequestClose, make, model, tr
         
         <span className="close" onClick={onRequestClose}>&times;</span>
         <h2>Select an Image</h2>
+        <p className="wiki-results-label">Wiki results for "{searchLabel}"</p> 
+        <p>
+          <label>
+            Include Variant
+            <input 
+              type="checkbox" 
+              checked={includeVariant} 
+              onChange={handleIncludeVariantToggle} 
+            />
+          </label>
+        </p>
+        <p>
+          <select onChange={handleColorChange} value={selectedColor}>
+            <option value="">Select Color</option>
+            <option value="Black">Black</option>
+            <option value="White">White</option>
+            <option value="Silver">Silver</option>
+            <option value="Gray">Gray</option>
+            <option value="Red">Red</option>          
+            <option value="Orange">Orange</option>
+            <option value="Yellow">Yellow</option>
+            <option value="Green">Green</option>
+            <option value="Blue">Blue</option>
+            <option value="Yellow">Yellow</option>
+          </select>
+        </p>
         <div className="image-grid">
           {images.map((image, index) => (
             <img key={index} src={image.thumburl || image.url} alt={`Car ${index}`} onClick={() => handleImageSelect(image)} />

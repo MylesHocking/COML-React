@@ -1,4 +1,90 @@
+.add-car-flex-container {
+  display: flex;
+  width: 100%;
+  flex-direction: row; /* Default layout for larger screens */
+}
+
+.right-hand-container {
+  flex: 1 1 auto;
+  background-color: #ffe7e7;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 10px;
+  padding: 10px; /* Added padding for visual spacing */
+}
+
+.add-car-sidebar {
+  max-width: 320px;
+  flex: none;
+  background-color: #eee;
+  border: 1px solid #A9A9A9;
+  border-radius: 21px;
+  padding: 10px;
+}
+
+.add-car-row {
+  display: flex;
+  flex-direction: row; /* Align items in a row */
+  justify-content: space-between; /* Space items evenly */
+  align-items: center; /* Align items vertically */
+  margin-bottom: 10px; /* Add some space between rows */
+}
+
+/* Styles for each column in the Add Car form */
+.add-car-col {
+  flex: 1; /* Each column takes equal space */
+  padding-right: 10px; /* Space between columns */
+}
+
+.add-car-col:last-child {
+  padding-right: 0; /* No padding on the right for the last column */
+}
+
+.carousel-container {
+  width: 100%; /* Explicit width */
+  max-width: 800px; /* Adjust based on your layout needs */
+}
+
+/* Media query for smaller screens */
+@media (max-width: 768px) {
+  .add-car-flex-container {
+      flex-direction: column; /* Stack children vertically on smaller screens */
+  }
+
+  .right-hand-container {
+      width: 100%; /* Take full width in mobile view */
+      order: 2; /* Optionally, ensure this container comes after the sidebar */
+  }
+
+  /* Adjust sidebar container styles for mobile view */
+  .add-car-sidebar {
+      width: 100%; /* Full width for the sidebar */
+      max-width: 100%; /* Override any max-width set for larger screens */
+      order: 1; /* Optionally, ensure this container comes before the right-hand container */
+  }
+}
+
+.file-input-label {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: #f0f0f0;
+  border: 1px solid #dcdcdc;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: #0000001a 0px 1px 3px 0px;
+  font-size: 16px; 
+}
+
+.file-input-label:hover {
+  background-color: #e0e0e0;
+}
+
+
 @media screen and (min-width: 768px) {
+  .add-car-col {
+    max-width: calc(50% - 10px); /* Half width minus the padding */
+  }
   .add-car-container {
       padding-left: 10px;
     }
@@ -32,6 +118,9 @@
  
   .add-car-preview {
     max-width: 100%;
+    max-height: 320px;
+    /* rounded corners */
+    border-radius: 5px;
   }
 
   .select-width {
@@ -78,7 +167,7 @@
 @media screen and (min-width: 728px) {
   .thumbnail-container {
     width: 100px; /* Double the width */
-    height: 140px; /* Double the height */
+    height: 120px; /* Double the height */
     /* Adjust other styles if necessary */
   }
 
