@@ -177,7 +177,7 @@ const AddCar = ({ cars }) => {
       } catch (error) {
           console.error('Error fetching first image:', error);
       }
-    }, []);
+    }, [apiUrl]);
 
     useEffect(() => {
       const fetchImageForVariant = async () => {
