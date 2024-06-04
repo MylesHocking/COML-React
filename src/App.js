@@ -7,6 +7,7 @@ import ShareForm from './components/ShareForm';
 import './App.css';
 import PrivateRoute from './PrivateRoute'; 
 import CarImageModal from './components/CarImageModal.js';
+import CallToAction from './components/CallToAction';
 
 
 const AddCar = lazy(() => import('./components/AddCar'));
@@ -35,8 +36,12 @@ function App() {
   const [userId, setUserId] = useState(null);
   const [cars, setCars] = useState([]);
   const [isLoggedIn, setIsLoggedIn] = useState(!!localStorage.getItem('userInfo'));
+  const is_anonymous = localStorage.getItem('is_anonymous');
   const [showShareForm, setShowShareForm] = useState(false);
   const [isNavExpanded, setIsNavExpanded] = useState(false);
+
+  const restrictedPath = userInfo && !is_anonymous ? '/userlist' : '/cta';
+  const eventsPath = userInfo && !is_anonymous ? '/events' : '/cta';
 
   const onShareClick = (e) => {
     e.preventDefault(); // Prevent default link behavior
@@ -83,20 +88,37 @@ function App() {
   const refreshFromLocalStorage = () => {
     const storedUserId = localStorage.getItem('user_id');
     const storedUserInfo = localStorage.getItem('userInfo');
-    if (storedUserId) {
+    const isAnonymous = localStorage.getItem('is_anonymous');
+    
+    if (storedUserId && storedUserId !== userId) {
       setUserId(storedUserId);
     }
     if (storedUserInfo) {
-      setUserInfo(storedUserInfo);
-      setIsLoggedIn(true);
+      try {
+        const parsedUserInfo = JSON.parse(storedUserInfo);
+        if (JSON.stringify(parsedUserInfo) !== JSON.stringify(userInfo)) {
+          setUserInfo(parsedUserInfo);
+        }
+      } catch (error) {
+        console.error('Failed to parse userInfo:', error);
+      }
+    }
+    if (isAnonymous) {
+      if (!isLoggedIn) setIsLoggedIn(true);
+    } else if (storedUserInfo) {
+      if (!isLoggedIn) setIsLoggedIn(true);
+    } else {
+      if (isLoggedIn) setIsLoggedIn(false);
     }
   };
+  
+  
 
   useEffect(() => {
     //console.log('useEffect running', userId, userInfo);
 
     const handleStorageChange = (e) => {
-      if (e.key === "user_id" || e.key === "userInfo") {
+      if (e.key === "user_id" || e.key === "userInfo" || e.key === "is_anonymous") {
         refreshFromLocalStorage();
       }
     };
@@ -110,7 +132,7 @@ function App() {
     return () => {
       window.removeEventListener("storage", handleStorageChange);
     };
-  }, [userId, userInfo]);
+  }, []);
 
   // Second useEffect to get cars when userId changes
   useEffect(() => {
@@ -162,14 +184,14 @@ function App() {
                     <div className="nav-links-left">
                       <Link to="/add-car" onClick={() => setIsNavExpanded(false)}>Add</Link>
                       <Link to={`/chart/${userId}`} onClick={() => setIsNavExpanded(false)}>Chart</Link>
-                      <Link to="/userlist" onClick={() => setIsNavExpanded(false)}>Chums</Link>
-                      <Link to="/events" onClick={() => setIsNavExpanded(false)}>Feed</Link>
+                      <Link to={restrictedPath}  onClick={() => setIsNavExpanded(false)}>Chums</Link>
+                      <Link to={eventsPath} onClick={() => setIsNavExpanded(false)}>Feed</Link>
                     </div>
                     <div className="nav-links-right">
                       {userInfo ? (
                         <>
                           <Link to="/" onClick={onShareClick}>Share</Link>
-                          <Link to={`/user/${userId}`} onClick={() => setIsNavExpanded(false)}>{JSON.parse(userInfo).firstname}</Link>
+                          <Link to={`/user/${userId}`} onClick={() => setIsNavExpanded(false)}>{userInfo.firstname}</Link>
                           <Link to="/logout" onClick={() => setIsNavExpanded(false)}>(logout)</Link>
                         </>
                       ) : (
@@ -193,6 +215,7 @@ function App() {
                     <Route path="/CarImageModal" element={<CarImageModal />} />
                     <Route path='Farewell' element={<Farewell />} />
                     <Route path='DataDeletion' element={<DataDeletion />} />
+                    <Route path="/cta" element={<CallToAction />} />
                     {/* Protected Routes */}
                     <Route path="/chart/:userId" element={
                       <PrivateRoute isLoggedIn={isLoggedIn}>
@@ -203,14 +226,14 @@ function App() {
                       <PrivateRoute isLoggedIn={isLoggedIn}>
                         <AddCar cars={cars} fetchCarsForUser={fetchCarsForUser} />
                       </PrivateRoute>
-                    } />
+                    } />                    
                     <Route path="/userlist" element={
-                      <PrivateRoute isLoggedIn={isLoggedIn}>
+                      <PrivateRoute isLoggedIn={isLoggedIn && !is_anonymous}>
                         <UserList />
                       </PrivateRoute>
                     } />
                     <Route path="/events" element={
-                      <PrivateRoute isLoggedIn={isLoggedIn}>
+                      <PrivateRoute isLoggedIn={isLoggedIn && !is_anonymous}>
                         <EventFeed />
                       </PrivateRoute>
                     } />

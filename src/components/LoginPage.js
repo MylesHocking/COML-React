@@ -54,6 +54,22 @@ function App() {
     return () => clearTimeout(timer);
   }, []);
   
+  // Anonymous login
+  const handleAnonymousLogin = async () => {
+    try {
+      const response = await axios.post(`${apiUrl}/api/anonymous_login`);
+      const { user_info } = response.data;
+      localStorage.setItem("user_id", user_info.id);
+      localStorage.setItem("userInfo", JSON.stringify(user_info));
+      localStorage.setItem("is_anonymous", true); // Add this line
+      refreshFromLocalStorage();
+      navigate('/chart/' + user_info.id);
+    } catch (error) {
+      console.error('Server error:', error);
+      alert('Failed to log in anonymously.');
+    }
+  };
+
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     // Implement your login logic here
@@ -96,6 +112,9 @@ function App() {
     <div className="login-container">
       <h1>Login</h1>
       <>
+        <div className="divider"><span>Login Anonymously</span></div>
+          <button className='button' onClick={handleAnonymousLogin}>Anonymous Login</button>
+  
         <div className="divider"><span>Signup/Login with LinkedIn</span></div>
           <LinkedInAuth /> {/* Use LinkedInAuth component here */}
         {/*<div className="divider"><span>Signup/Login with Facebook</span></div>
