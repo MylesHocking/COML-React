@@ -85,7 +85,7 @@ function App() {
   }, []);  
 
   
-  const refreshFromLocalStorage = () => {
+  const refreshFromLocalStorage = useCallback(() => {
     const storedUserId = localStorage.getItem('user_id');
     const storedUserInfo = localStorage.getItem('userInfo');
     const isAnonymous = localStorage.getItem('is_anonymous');
@@ -110,7 +110,7 @@ function App() {
     } else {
       if (isLoggedIn) setIsLoggedIn(false);
     }
-  };
+  }, [userId, userInfo, isLoggedIn]);
   
   
 
