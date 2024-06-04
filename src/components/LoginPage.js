@@ -40,6 +40,7 @@ function App() {
   const handleLoginSuccess = (user_info) => {
     localStorage.setItem("user_id", user_info.id); 
     localStorage.setItem("userInfo", JSON.stringify(user_info));
+    localStorage.removeItem("is_anonymous"); 
     refreshFromLocalStorage();
     navigate('/chart/' + user_info.id);
   };
@@ -61,7 +62,7 @@ function App() {
       const { user_info } = response.data;
       localStorage.setItem("user_id", user_info.id);
       localStorage.setItem("userInfo", JSON.stringify(user_info));
-      localStorage.setItem("is_anonymous", true); // Add this line
+      localStorage.setItem("is_anonymous", true); 
       refreshFromLocalStorage();
       navigate('/chart/' + user_info.id);
     } catch (error) {

@@ -20,6 +20,7 @@ const LinkedInCallbackHandler = () => {
     
     localStorage.setItem("user_id", user_id);
     localStorage.setItem("userInfo", JSON.stringify(user_info));
+    localStorage.removeItem("is_anonymous"); 
     refreshFromLocalStorage();
     navigate('/chart/' + user_id);
   }, [navigate, location.search, refreshFromLocalStorage]);
