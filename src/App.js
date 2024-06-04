@@ -132,7 +132,7 @@ function App() {
     return () => {
       window.removeEventListener("storage", handleStorageChange);
     };
-  }, []);
+  }, [refreshFromLocalStorage]);
 
   // Second useEffect to get cars when userId changes
   useEffect(() => {
